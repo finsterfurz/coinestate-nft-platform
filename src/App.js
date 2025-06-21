@@ -2,7 +2,7 @@
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Navigation } from './components/navigation';
-import { NotificationCenter } from './components/ui';
+import { NotificationCenter, ErrorBoundary } from './components/ui';
 import { Homepage, About, Projects, Dashboard, HowItWorks } from './pages';
 import { themes } from './utils/themes';
 
@@ -29,25 +29,21 @@ const AppContent = () => {
   return (
     <div className={`min-h-screen transition-colors ${themes[theme].primary}`}>
       <Navigation />
-      <main>{renderPage()}</main>
+      <ErrorBoundary>
+        <main>{renderPage()}</main>
+      </ErrorBoundary>
       <NotificationCenter />
-      
-      <style jsx>{`
-        @keyframes slideIn {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-        .animate-slideIn { animation: slideIn 0.3s ease-out; }
-      `}</style>
     </div>
   );
 };
 
 const App = () => {
   return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <AppContent />
+      </AppProvider>
+    </ErrorBoundary>
   );
 };
 
