@@ -47,5 +47,5 @@
     "eslint": "^8.43.0",
     "prettier": "^2.8.8"
   },
-  "homepage": "https://finsterfurz.github.io/coinestate-nft-platform"
+  "homepage": "."
 }
