@@ -2,7 +2,7 @@
 
 export const ALL_PROJECTS = [
   {
-    slug: 'vienna-luxury-apartments',
+     slug: 'vienna-luxury-apartments',
     name: 'Vienna Luxury Apartments',
     location: 'Vienna, Austria - Innere Stadt (1st District)',
     totalValue: 12500000,
