@@ -1,6 +1,7 @@
-// src/components/ui/LoadingSpinner.js
+
 import React from 'react';
 
+// ==================== LOADING SPINNER ====================
 const LoadingSpinner = ({ size = 'md', className = '' }) => {
   const sizes = { 
     sm: 'w-4 h-4', 
@@ -10,9 +11,7 @@ const LoadingSpinner = ({ size = 'md', className = '' }) => {
   };
   
   return (
-    <div 
-      className={`animate-spin rounded-full border-2 border-blue-600 border-t-transparent ${sizes[size]} ${className}`}
-    />
+    <div className={`animate-spin rounded-full border-2 border-blue-600 border-t-transparent ${sizes[size]} ${className}`}></div>
   );
 };
 
