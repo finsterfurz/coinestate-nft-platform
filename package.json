@@ -16,13 +16,18 @@
     "@openzeppelin/contracts": "^5.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint src/**/*.{js,jsx}",
-    "lint:fix": "eslint src/**/*.{js,jsx} --fix",
-    "format": "prettier --write src/**/*.{js,jsx,css,md}"
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "test:coverage": "npx hardhat coverage",
+    "deploy:local": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy:sepolia": "npx hardhat run scripts/deploy.js --network sepolia",
+    "deploy:mainnet": "npx hardhat run scripts/deploy.js --network mainnet",
+    "setup:local": "npx hardhat run scripts/setup-test-data.js --network localhost",
+    "verify:sepolia": "npx hardhat verify --network sepolia",
+    "node": "npx hardhat node",
+    "console": "npx hardhat console",
+    "size": "npx hardhat size-contracts",
+    "gas": "REPORT_GAS=true npx hardhat test"
   },
   "eslintConfig": {
     "extends": [
