@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Building, Sun, Moon, Menu, X } from '../icons/Icons';
+import { Building } from '../icons/Building';
+import { Sun } from '../icons/Sun';
+import { Moon } from '../icons/Moon';
+import { Menu } from '../icons/Menu';
+import { X } from '../icons/X';
 
 // ==================== NAVIGATION ====================
 const Navigation = () => {
