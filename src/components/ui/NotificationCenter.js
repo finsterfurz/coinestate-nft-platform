@@ -1,15 +1,13 @@
-// src/components/ui/NotificationCenter.js
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { X } from '../icons';
+import { X } from '../icons/X';
 
+// ==================== NOTIFICATION CENTER ====================
 const NotificationCenter = () => {
   const { notifications, updateState } = useApp();
 
   const removeNotification = (id) => {
-    updateState(prev => ({ 
-      notifications: prev.notifications.filter(n => n.id !== id) 
-    }));
+    updateState(prev => ({ notifications: prev.notifications.filter(n => n.id !== id) }));
   };
 
   return (
@@ -26,10 +24,7 @@ const NotificationCenter = () => {
         >
           <div className="flex justify-between items-start">
             <p className="text-sm font-medium">{notification.message}</p>
-            <button 
-              onClick={() => removeNotification(notification.id)} 
-              className="ml-4 text-gray-500 hover:text-gray-700"
-            >
+            <button onClick={() => removeNotification(notification.id)} className="ml-4 text-gray-500 hover:text-gray-700">
               <X className="w-4 h-4" />
             </button>
           </div>
