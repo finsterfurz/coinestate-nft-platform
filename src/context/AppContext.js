@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ALL_PROJECTS, DASHBOARD_PROJECTS } from '../data/projectsData';
+import { ALL_PROJECTS, DASHBOARD_PROJECTS } from '../data/projects';
 
 // ==================== CONTEXT & STATE MANAGEMENT ====================
 const AppContext = createContext();
