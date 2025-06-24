@@ -1,8 +1,6 @@
-// src/data/projects.js
-
 export const ALL_PROJECTS = [
   {
-     slug: 'vienna-luxury-apartments',
+    slug: 'vienna-luxury-apartments',
     name: 'Vienna Luxury Apartments',
     location: 'Vienna, Austria - Innere Stadt (1st District)',
     totalValue: 12500000,
@@ -183,4 +181,5 @@ export const ALL_PROJECTS = [
   }
 ];
 
+// Get projects with private dashboard access
 export const DASHBOARD_PROJECTS = ALL_PROJECTS.filter(p => p.privateInfo);
