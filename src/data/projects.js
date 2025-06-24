@@ -1,3 +1,4 @@
+// ==================== PROJECT DATA ====================
 export const ALL_PROJECTS = [
   {
     slug: 'vienna-luxury-apartments',
