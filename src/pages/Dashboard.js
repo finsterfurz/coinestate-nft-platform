@@ -11,7 +11,7 @@ import {
   X, 
   Check,
   ChevronDown 
-} from '../components/icons';
+} from '../components/icons/AllIcons';
 
 // ==================== DASHBOARD PAGE ====================
 const DashboardPage = () => {
