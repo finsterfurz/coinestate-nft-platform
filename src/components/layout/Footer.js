@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Building, Shield, Key, Globe } from '../icons';
+import { Building, Shield, Key, Globe } from '../icons/AllIcons';
 
 // ==================== FOOTER ====================
 const Footer = () => {
