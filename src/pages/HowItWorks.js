@@ -10,7 +10,7 @@ import {
   ArrowRight,
   Globe,
   ChevronDown 
-} from '../components/icons';
+} from '../components/icons/AllIcons';
 
 // ==================== HOW IT WORKS PAGE ====================
 const HowItWorksPage = () => {
