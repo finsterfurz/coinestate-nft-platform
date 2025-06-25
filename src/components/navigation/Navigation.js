@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Building } from '../icons/Building';
+import { Globe, Building, ArrowRight, Check, Shield, Key, Users, ChevronDown } from '../icons/AllIcons';
 import { Sun } from '../icons/Sun';
 import { Moon } from '../icons/Moon';
 import { Menu } from '../icons/Menu';
