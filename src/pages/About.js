@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { typography } from '../utils/typography';
-import { Shield, Building, Users, Globe, Key, Check, ArrowRight } from '../components/icons';
+import { Shield, Building, Users, Globe, Key, Check, ArrowRight } from '../components/icons/AllIcons';
 
 // ==================== ABOUT PAGE ====================
 const AboutPage = () => {
