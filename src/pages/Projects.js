@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { Globe, Key, Check, Building } from '../icons/AllIcons.js';
+import { Globe, Key, Check, Building } from '../components/icons/AllIcons.js';
 
 // ==================== PROJECTS PAGE ====================
 const ProjectsPage = () => {
