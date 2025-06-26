@@ -1,7 +1,7 @@
 // src/components/ui/ThemeBuilder.js
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Settings, X, Check } from '../icons';
+import { Settings, X, Check } from '../components/icons/AllIcons.js';
 import { themes } from '../../utils/themes';
 import { typography } from '../../utils/typography';
 

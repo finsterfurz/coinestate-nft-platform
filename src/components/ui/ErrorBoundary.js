@@ -1,6 +1,6 @@
 // src/components/ui/ErrorBoundary.js
 import React from 'react';
-import { Shield } from '../icons';
+import { Shield } from '../components/icons/AllIcons.js';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {

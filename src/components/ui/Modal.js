@@ -1,6 +1,6 @@
 // src/components/ui/Modal.js
 import React, { useEffect } from 'react';
-import { X } from '../icons';
+import { X } from '../components/icons/AllIcons.js';
 import { themes } from '../../utils/themes';
 import { useApp } from '../../context/AppContext';
 

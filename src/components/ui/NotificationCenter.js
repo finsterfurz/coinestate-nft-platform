@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { X } from '../icons/AllIcons.js';
+import { X } from '../components/icons/AllIcons.js';
 
 // ==================== NOTIFICATION CENTER ====================
 const NotificationCenter = () => {
