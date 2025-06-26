@@ -10,7 +10,7 @@ import {
   Key, 
   Users, 
   ChevronDown 
-} from '../components/icons/AllIcons.js';
+} from '../components/icons';
 
 // ==================== HOMEPAGE ====================
 const Homepage = () => {
