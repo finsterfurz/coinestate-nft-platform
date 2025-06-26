@@ -1,5 +1,5 @@
 // src/utils/themes.js
-import { Sun, Moon, Building } from '../components/icons';
+import { Sun, Moon, Building } from '../components/icons/AllIcons.js';
 
 export const themes = {
   light: {
