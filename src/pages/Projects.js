@@ -1,16 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { Globe, Key, Check, Building } from '../components/icons/AllIcons';
+import { Globe, Key, Check, Building } from '../icons/AllIcons';
 
 // ==================== PROJECTS PAGE ====================
 const ProjectsPage = () => {
-  const { theme, updateState, projects } = useApp();
+  const { theme, updateState, projects = [] } = useApp(); // 🔥 DEFAULT ARRAY
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('success');
 
   // Filter and sort projects
   const filteredProjects = useMemo(() => {
-    if (!projects || !Array.isArray(projects)) return [];
+    // 🔥 DEFENSIVE CHECK
+    if (!projects || !Array.isArray(projects) || projects.length === 0) {
+      return [];
+    }
     
     let filtered = [...projects];
     
@@ -28,11 +31,11 @@ const ProjectsPage = () => {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'success':
-          return b.marketData.successRate - a.marketData.successRate;
+          return (b.marketData?.successRate || 0) - (a.marketData?.successRate || 0);
         case 'value':
-          return b.totalValue - a.totalValue;
+          return (b.totalValue || 0) - (a.totalValue || 0);
         case 'name':
-          return a.name.localeCompare(b.name);
+          return (a.name || '').localeCompare(b.name || '');
         default:
           return 0;
       }
@@ -56,9 +59,24 @@ const ProjectsPage = () => {
     }
   };
 
-  const totalValue = projects?.reduce((sum, p) => sum + p.totalValue, 0) || 0;
-  const totalNFTs = projects?.reduce((sum, p) => sum + p.nftCount, 0) || 0;
-  const avgSuccessRate = projects?.length ? (projects.reduce((sum, p) => sum + p.marketData.successRate, 0) / projects.length) : 0;
+  // 🔥 SAFE CALCULATIONS WITH DEFAULTS
+  const totalValue = projects?.reduce((sum, p) => sum + (p.totalValue || 0), 0) || 0;
+  const totalNFTs = projects?.reduce((sum, p) => sum + (p.nftCount || 0), 0) || 0;
+  const avgSuccessRate = projects?.length ? 
+    (projects.reduce((sum, p) => sum + (p.marketData?.successRate || 0), 0) / projects.length) : 0;
+
+  // 🔥 LOADING STATE
+  if (!projects || projects.length === 0) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+        <div className="text-center">
+          <Building className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+          <h3 className="text-lg font-medium mb-2">Loading Projects...</h3>
+          <p className="text-gray-500">Please wait while we load the project data.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
@@ -151,22 +169,23 @@ const ProjectsPage = () => {
       <section className="pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project) => (
+            {/* 🔥 SAFE MAP WITH DEFAULT */}
+            {(filteredProjects || []).map((project) => (
               <div key={project.slug} className={`rounded-xl shadow-lg border overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 ${
                 theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
               }`}>
                 <div className="relative">
                   <img
-                    src={project.image}
-                    alt={project.name}
+                    src={project.image || '/placeholder.jpg'}
+                    alt={project.name || 'Project'}
                     className="w-full h-48 object-cover"
                   />
                   <div className="absolute top-4 right-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
-                      {project.status}
+                      {project.status || 'Unknown'}
                     </span>
                   </div>
-                  {project.marketData.successRate >= 4.5 && (
+                  {(project.marketData?.successRate || 0) >= 4.5 && (
                     <div className="absolute top-4 left-4">
                       <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">
                         High Success Rate
@@ -177,39 +196,39 @@ const ProjectsPage = () => {
                 
                 <div className="p-6">
                   <h3 className={`text-xl font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                    {project.name}
+                    {project.name || 'Unnamed Project'}
                   </h3>
                   <p className={`text-sm mb-4 flex items-center ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                     <Globe className="w-4 h-4 mr-1" />
-                    {project.location}
+                    {project.location || 'Location TBD'}
                   </p>
                   <p className={`text-sm mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                    {project.description}
+                    {project.description || 'Description coming soon...'}
                   </p>
                   
                   {/* Key Metrics */}
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div>
                       <div className="text-lg font-bold text-blue-600">
-                        €{(project.totalValue / 1000000).toFixed(1)}M
+                        €{((project.totalValue || 0) / 1000000).toFixed(1)}M
                       </div>
                       <div className="text-xs text-gray-500">Total Value</div>
                     </div>
                     <div>
                       <div className="text-lg font-bold text-green-600">
-                        {project.marketData.successRate}%
+                        {(project.marketData?.successRate || 0)}%
                       </div>
                       <div className="text-xs text-gray-500">Success Rate</div>
                     </div>
                     <div>
                       <div className="text-lg font-bold text-indigo-600">
-                        {project.nftCount.toLocaleString()}
+                        {(project.nftCount || 0).toLocaleString()}
                       </div>
                       <div className="text-xs text-gray-500">NFT Keys</div>
                     </div>
                     <div>
                       <div className="text-lg font-bold text-purple-600">
-                        €{project.monthlyRent.toLocaleString()}
+                        €{(project.monthlyRent || 0).toLocaleString()}
                       </div>
                       <div className="text-xs text-gray-500">Monthly Rent</div>
                     </div>
@@ -221,7 +240,7 @@ const ProjectsPage = () => {
                       Key Features
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                      {project.highlights?.map((highlight, index) => (
+                      {(project.highlights || []).map((highlight, index) => (
                         <span key={index} className={`px-2 py-1 text-xs rounded ${
                           theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
                         }`}>
