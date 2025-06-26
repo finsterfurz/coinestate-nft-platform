@@ -30,6 +30,16 @@ export const AppProvider = ({ children }) => {
     setState(prev => typeof updates === 'function' ? updates(prev) : { ...prev, ...updates });
   };
 
+  // 🔥 THEME EFFECT - Wendet die dark Klasse auf HTML Element an
+  useEffect(() => {
+    const html = document.documentElement;
+    if (state.theme === 'dark') {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+  }, [state.theme]);
+
   const addNotification = (message, type = 'info', duration = 5000) => {
     const id = Date.now();
     const notification = { id, message, type, timestamp: Date.now() };
