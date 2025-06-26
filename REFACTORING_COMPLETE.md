@@ -133,7 +133,7 @@ npm start
 
 ### Using Icon Components
 ```jsx
-import { Building, Key, Shield } from '../components/icons';
+import { Building, Key, Shield } from '../components/icons/AllIcons.js';
 
 <Building className="h-6 w-6 text-blue-600" />
 <Key className="h-4 w-4" />
