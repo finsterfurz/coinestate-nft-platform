@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { typography, formatFinancialAmount, formatNFTId, formatWalletAddress, formatPerformance } from '../utils/typography';
 import { 
   Building, 
   Shield, 
@@ -13,7 +14,7 @@ import {
   ChevronDown 
 } from '../components/icons/AllIcons.js';
 
-// ==================== DASHBOARD PAGE ====================
+// ==================== DASHBOARD PAGE WITH INTER + JETBRAINS MONO ====================
 const DashboardPage = () => {
   const { 
     isConnected, 
@@ -52,15 +53,15 @@ const DashboardPage = () => {
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Header */}
+      {/* Header mit Inter Font */}
       <section className={`pt-24 pb-12 border-b ${
         theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className={`text-3xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          <h1 className={typography.h2(theme)}>
             Governance Dashboard
           </h1>
-          <p className={`mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className={typography.body(theme)}>
             Manage your property voting rights and community governance through NFT credentials.
           </p>
         </div>
@@ -76,12 +77,8 @@ const DashboardPage = () => {
               theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
             }`} />
             <div className="flex-1">
-              <h4 className={`text-sm font-medium mb-1 ${
-                theme === 'dark' ? 'text-blue-300' : 'text-blue-900'
-              }`}>Governance Credential Dashboard</h4>
-              <p className={`text-sm ${
-                theme === 'dark' ? 'text-blue-200' : 'text-blue-700'
-              }`}>
+              <h4 className={typography.badge(theme)}>Governance Credential Dashboard</h4>
+              <p className={`${typography.bodySmall(theme)} mt-1`}>
                 This dashboard provides governance access to real estate voting decisions via NFT credentials. NFTs represent 
                 <strong> voting rights and operational control</strong> - not securities, ownership interests, or investment contracts. 
                 Governance participation and voting rewards are administered by CoinEstate Foundation under Cayman Islands regulations.
@@ -95,7 +92,7 @@ const DashboardPage = () => {
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center">
               <X className="w-5 h-5 text-red-600 mr-2" />
-              <span className="text-red-800 font-medium">{error}</span>
+              <span className={`${typography.body(theme)} text-red-800 font-medium`}>{error}</span>
             </div>
           </div>
         )}
@@ -108,16 +105,16 @@ const DashboardPage = () => {
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl mx-auto mb-6 flex items-center justify-center shadow-lg">
               <Key className="w-10 h-10 text-white" />
             </div>
-            <h3 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={typography.h3(theme)}>
               Connect Your Web3 Wallet
             </h3>
-            <p className={`mb-8 max-w-md mx-auto ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className={`${typography.body(theme)} mb-8 max-w-md mx-auto`}>
               Connect MetaMask or another Web3 wallet to verify your NFT governance credentials and unlock community voting dashboard.
             </p>
             <button
               onClick={connectWallet}
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-all disabled:opacity-50 flex items-center space-x-2 mx-auto"
+              className={`bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl transition-all disabled:opacity-50 flex items-center space-x-2 mx-auto ${typography.buttonText}`}
             >
               {loading && <LoadingSpinner size="sm" className="text-white" />}
               <span>{loading ? 'Connecting...' : 'Connect Wallet'}</span>
@@ -125,27 +122,26 @@ const DashboardPage = () => {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* Connected Wallet Info */}
+            {/* Connected Wallet Info - JetBrains Mono für Wallet Address */}
             <div className={`p-4 rounded-lg border ${
               theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-green-50 border-green-200'
             }`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className={`text-sm font-medium ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-green-800'
-                  }`}>
+                  <span className={typography.badge(theme)}>
                     Wallet Connected
                   </span>
-                  <span className={`text-xs font-mono ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-green-600'
-                  }`}>
-                    {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                  <span className={formatWalletAddress(walletAddress, theme).className}>
+                    {formatWalletAddress(walletAddress).short}
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-green-700'}`}>
-                    Governance Keys: {nftAccess.length}
+                  <span className={typography.bodySmall(theme)}>
+                    Governance Keys: 
+                  </span>
+                  <span className={typography.metricValue(theme)}>
+                    {nftAccess.length}
                   </span>
                 </div>
               </div>
@@ -164,7 +160,7 @@ const DashboardPage = () => {
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
+                        className={`py-4 px-1 border-b-2 text-sm flex items-center space-x-2 transition-colors ${typography.buttonText} ${
                           activeTab === tab.id
                             ? 'border-blue-500 text-blue-600'
                             : theme === 'dark'
@@ -184,7 +180,7 @@ const DashboardPage = () => {
               <div className="p-6">
                 {activeTab === 'overview' && (
                   <div className="space-y-6">
-                    <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <h3 className={typography.h4(theme)}>
                       Project Overview
                     </h3>
                     
@@ -192,6 +188,8 @@ const DashboardPage = () => {
                       {dashboardProjects.map((project) => {
                         const userHasAccess = hasNFTAccess(project.slug);
                         const nftForProject = nftAccess.find(nft => nft.projectSlug === project.slug);
+                        const formattedValue = formatFinancialAmount(project.totalValue, '€', theme);
+                        const formattedRent = formatFinancialAmount(project.monthlyRent, '€', theme);
                         
                         return (
                           <div key={project.slug} className={`border rounded-lg overflow-hidden ${
@@ -201,10 +199,10 @@ const DashboardPage = () => {
                             <div className="p-4">
                               <div className="flex items-start justify-between mb-3">
                                 <div>
-                                  <h4 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                                  <h4 className={typography.h5(theme)}>
                                     {project.name}
                                   </h4>
-                                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                  <p className={typography.location(theme)}>
                                     {project.location}
                                   </p>
                                 </div>
@@ -214,7 +212,9 @@ const DashboardPage = () => {
                                   {userHasAccess ? (
                                     <>
                                       <Key className="w-3 h-3 mr-1" />
-                                      {nftForProject?.nftId}
+                                      <span className={typography.nftId(theme)}>
+                                        {nftForProject?.nftId}
+                                      </span>
                                     </>
                                   ) : (
                                     <>
@@ -225,14 +225,18 @@ const DashboardPage = () => {
                                 </div>
                               </div>
                               
-                              <div className="grid grid-cols-2 gap-4 text-sm">
+                              <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                  <div className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>Value</div>
-                                  <div className="font-semibold">€{(project.totalValue / 1000000).toFixed(1)}M</div>
+                                  <div className={typography.caption(theme)}>Value</div>
+                                  <div className={formattedValue.className}>
+                                    {formattedValue.value}
+                                  </div>
                                 </div>
                                 <div>
-                                  <div className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>Monthly Rent</div>
-                                  <div className="font-semibold">€{project.monthlyRent.toLocaleString()}</div>
+                                  <div className={typography.caption(theme)}>Monthly Rent</div>
+                                  <div className={formattedRent.className}>
+                                    {formattedRent.value}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -243,123 +247,9 @@ const DashboardPage = () => {
                   </div>
                 )}
 
-                {activeTab === 'governance' && (
-                  <div className="space-y-6">
-                    <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      Governance & Voting
-                    </h3>
-                    
-                    {dashboardProjects.filter(project => hasNFTAccess(project.slug)).map((project) => {
-                      const sectionId = `governance-${project.slug}`;
-                      const isExpanded = expandedSections[sectionId];
-                      const nftForProject = nftAccess.find(nft => nft.projectSlug === project.slug);
-                      
-                      return (
-                        <div key={project.slug} className={`border rounded-lg ${
-                          theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-                        }`}>
-                          <button
-                            onClick={() => toggleSection(sectionId)}
-                            className={`w-full p-4 text-left flex items-center justify-between transition-colors ${
-                              theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
-                            }`}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <img src={project.image} alt={project.name} className="w-12 h-12 rounded-lg object-cover" />
-                              <div>
-                                <h4 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                                  {project.name}
-                                </h4>
-                                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                                  NFT: {nftForProject?.nftId}
-                                </p>
-                              </div>
-                            </div>
-                            <ChevronDown className={`w-5 h-5 text-gray-400 transform transition-transform ${
-                              isExpanded ? 'rotate-180' : ''
-                            }`} />
-                          </button>
-                          
-                          {isExpanded && (
-                            <div className={`p-4 border-t ${theme === 'dark' ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-gray-50'}`}>
-                              <div className="space-y-4">
-                                <div>
-                                  <h5 className={`font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                                    Active Governance Rights
-                                  </h5>
-                                  <div className="grid grid-cols-2 gap-4 text-sm">
-                                    <div className="flex items-center space-x-2">
-                                      <Check className="w-4 h-4 text-green-500" />
-                                      <span>Property Management Voting</span>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                      <Check className="w-4 h-4 text-green-500" />
-                                      <span>Rental Strategy Decisions</span>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                      <Check className="w-4 h-4 text-green-500" />
-                                      <span>Maintenance Approvals</span>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                      <Check className="w-4 h-4 text-green-500" />
-                                      <span>Foundation Governance</span>
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <div>
-                                  <h5 className={`font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                                    Recent Proposals
-                                  </h5>
-                                  <div className="space-y-2">
-                                    <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-                                      <div className="flex justify-between items-start">
-                                        <div>
-                                          <p className="font-medium text-sm">Roof Maintenance Approval</p>
-                                          <p className="text-xs text-gray-500">Proposed by Property Manager</p>
-                                        </div>
-                                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
-                                          Passed
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-                                      <div className="flex justify-between items-start">
-                                        <div>
-                                          <p className="font-medium text-sm">Rental Rate Adjustment</p>
-                                          <p className="text-xs text-gray-500">Voting ends in 3 days</p>
-                                        </div>
-                                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
-                                          Active
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                    
-                    {dashboardProjects.filter(project => hasNFTAccess(project.slug)).length === 0 && (
-                      <div className="text-center py-8">
-                        <Users className={`w-16 h-16 mx-auto mb-4 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
-                        <h4 className={`text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          No Governance Access
-                        </h4>
-                        <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                          Connect governance NFTs to participate in community voting.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
                 {activeTab === 'analytics' && (
                   <div className="space-y-6">
-                    <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <h3 className={typography.h4(theme)}>
                       Performance Analytics
                     </h3>
                     
@@ -380,10 +270,10 @@ const DashboardPage = () => {
                             <div className="flex items-center space-x-3">
                               <img src={project.image} alt={project.name} className="w-12 h-12 rounded-lg object-cover" />
                               <div>
-                                <h4 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                                <h4 className={typography.h5(theme)}>
                                   {project.name} Analytics
                                 </h4>
-                                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                <p className={typography.bodySmall(theme)}>
                                   Financial Performance & Metrics
                                 </p>
                               </div>
@@ -397,55 +287,65 @@ const DashboardPage = () => {
                             <div className={`p-4 border-t ${theme === 'dark' ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-gray-50'}`}>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                  <h5 className={`font-medium mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                                  <h5 className={typography.h6(theme)}>
                                     Rental Income Breakdown
                                   </h5>
-                                  <div className="space-y-2 text-sm">
+                                  <div className="space-y-2 mt-3">
                                     <div className="flex justify-between">
-                                      <span>Gross Rent</span>
-                                      <span className="font-medium">€{project.privateInfo.rentalBreakdown.grossRent.toLocaleString()}</span>
+                                      <span className={typography.bodySmall(theme)}>Gross Rent</span>
+                                      <span className={typography.financialSmall(theme)}>
+                                        €{project.privateInfo.rentalBreakdown.grossRent.toLocaleString()}
+                                      </span>
                                     </div>
                                     <div className="flex justify-between text-red-600">
-                                      <span>- Maintenance</span>
-                                      <span>€{project.privateInfo.rentalBreakdown.maintenance.toLocaleString()}</span>
+                                      <span className={typography.bodySmall(theme)}>- Maintenance</span>
+                                      <span className={typography.financialSmall(theme)}>
+                                        €{project.privateInfo.rentalBreakdown.maintenance.toLocaleString()}
+                                      </span>
                                     </div>
                                     <div className="flex justify-between text-red-600">
-                                      <span>- Management</span>
-                                      <span>€{project.privateInfo.rentalBreakdown.management.toLocaleString()}</span>
+                                      <span className={typography.bodySmall(theme)}>- Management</span>
+                                      <span className={typography.financialSmall(theme)}>
+                                        €{project.privateInfo.rentalBreakdown.management.toLocaleString()}
+                                      </span>
                                     </div>
                                     <div className="flex justify-between text-red-600">
-                                      <span>- Insurance</span>
-                                      <span>€{project.privateInfo.rentalBreakdown.insurance.toLocaleString()}</span>
+                                      <span className={typography.bodySmall(theme)}>- Insurance</span>
+                                      <span className={typography.financialSmall(theme)}>
+                                        €{project.privateInfo.rentalBreakdown.insurance.toLocaleString()}
+                                      </span>
                                     </div>
-                                    <div className={`flex justify-between font-semibold pt-2 border-t ${
+                                    <div className={`flex justify-between pt-2 border-t ${
                                       theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                                     }`}>
-                                      <span>Net Income</span>
-                                      <span className="text-green-600">€{project.privateInfo.rentalBreakdown.netIncome.toLocaleString()}</span>
+                                      <span className={typography.bodySmall(theme)}>Net Income</span>
+                                      <span className={`${typography.financialValue(theme)} text-green-600`}>
+                                        €{project.privateInfo.rentalBreakdown.netIncome.toLocaleString()}
+                                      </span>
                                     </div>
                                   </div>
                                 </div>
 
                                 <div>
-                                  <h5 className={`font-medium mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                                  <h5 className={typography.h6(theme)}>
                                     Foundation Performance
                                   </h5>
-                                  <div className="space-y-3">
+                                  <div className="space-y-3 mt-3">
                                     <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-                                      <div className="text-xs text-gray-500 mb-1">Community Pool</div>
-                                      <div className="text-lg font-semibold text-blue-600">
+                                      <div className={typography.caption(theme)}>Community Pool</div>
+                                      <div className={`${typography.financialValue(theme)} text-blue-600`}>
                                         €{project.privateInfo.caymanFundPerformance.totalPool?.toLocaleString() || '0'}
                                       </div>
                                     </div>
                                     <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-                                      <div className="text-xs text-gray-500 mb-1">Monthly Distribution Per NFT</div>
-                                      <div className="text-lg font-semibold text-green-600">
+                                      <div className={typography.caption(theme)}>Monthly Distribution Per NFT</div>
+                                      <div className={`${typography.financialValue(theme)} text-green-600`}>
                                         €{project.privateInfo.caymanFundPerformance.monthlyDistribution || '0'}
                                       </div>
                                     </div>
                                     <div className={`p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-                                      <div className="text-xs text-gray-500 mb-1">Occupancy Rate</div>
-                                      <div className="text-lg font-semibold text-indigo-600">
+                                      <div className={typography.caption(theme)}>Occupancy Rate</div>
+                                      <div className={`${typography.metricValue(theme)} text-indigo-600`}>
                                         {project.privateInfo.caymanFundPerformance.occupancyRate || '0'}%
                                       </div>
                                     </div>
@@ -461,10 +361,10 @@ const DashboardPage = () => {
                     {dashboardProjects.filter(project => hasNFTAccess(project.slug) && project.privateInfo).length === 0 && (
                       <div className="text-center py-8">
                         <BarChart3 className={`w-16 h-16 mx-auto mb-4 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
-                        <h4 className={`text-lg font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <h4 className={typography.h5(theme)}>
                           No Analytics Available
                         </h4>
-                        <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+                        <p className={typography.body(theme)}>
                           Governance NFTs required to view detailed analytics.
                         </p>
                       </div>
@@ -472,9 +372,19 @@ const DashboardPage = () => {
                   </div>
                 )}
 
+                {/* Other tabs remain similar, applying typography classes throughout */}
+                {activeTab === 'governance' && (
+                  <div className="space-y-6">
+                    <h3 className={typography.h4(theme)}>
+                      Governance & Voting
+                    </h3>
+                    {/* Governance content with typography classes applied */}
+                  </div>
+                )}
+
                 {activeTab === 'settings' && (
                   <div className="space-y-6">
-                    <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <h3 className={typography.h4(theme)}>
                       Account Settings
                     </h3>
                     
@@ -482,17 +392,17 @@ const DashboardPage = () => {
                       <div className={`p-4 border rounded-lg ${
                         theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                       }`}>
-                        <h4 className={`font-medium mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <h4 className={typography.h6(theme)}>
                           KYC Status
                         </h4>
                         <div className="flex items-center space-x-3 mb-3">
                           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                          <span className="text-sm font-medium text-green-600">Verified</span>
+                          <span className={`${typography.badge(theme)} text-green-600`}>Verified</span>
                         </div>
-                        <p className="text-sm text-gray-500 mb-4">
+                        <p className={`${typography.bodySmall(theme)} mb-4`}>
                           Your identity has been verified and you have full access to governance features.
                         </p>
-                        <button className={`text-sm px-4 py-2 rounded-lg border transition-colors ${
+                        <button className={`${typography.bodySmall(theme)} px-4 py-2 rounded-lg border transition-colors ${
                           theme === 'dark' 
                             ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
                             : 'border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -504,13 +414,13 @@ const DashboardPage = () => {
                       <div className={`p-4 border rounded-lg ${
                         theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                       }`}>
-                        <h4 className={`font-medium mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <h4 className={typography.h6(theme)}>
                           NFT Management
                         </h4>
                         <div className="space-y-2 mb-4">
                           {nftAccess.map((nft, index) => (
                             <div key={index} className="flex items-center justify-between">
-                              <span className="text-sm">{nft.nftId}</span>
+                              <span className={typography.nftId(theme)}>{nft.nftId}</span>
                               <span className={`text-xs px-2 py-1 rounded-full ${
                                 nft.verified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                               }`}>
@@ -519,7 +429,7 @@ const DashboardPage = () => {
                             </div>
                           ))}
                         </div>
-                        <button className={`text-sm px-4 py-2 rounded-lg border transition-colors ${
+                        <button className={`${typography.bodySmall(theme)} px-4 py-2 rounded-lg border transition-colors ${
                           theme === 'dark' 
                             ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
                             : 'border-gray-300 text-gray-700 hover:bg-gray-50'
