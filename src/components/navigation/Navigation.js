@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { useTheme } from '../../context/ThemeContext';
 import { Globe, Building, ArrowRight, Check, Shield, Key, Users, ChevronDown, Menu, X } from '../icons/AllIcons.js';
 import ThemeToggle from '../ui/ThemeToggle';
+import ThemeToggleDebug from '../ui/ThemeToggleDebug';
 
 // ==================== NAVIGATION ====================
 const Navigation = () => {
@@ -88,8 +89,8 @@ const Navigation = () => {
                 </div>
               )}
               
-              {/* 🎯 NEW: Isolated ThemeToggle Component */}
-              <ThemeToggle />
+              {/* 🔧 DEBUG: Using ThemeToggleDebug instead of ThemeToggle */}
+              <ThemeToggleDebug />
               
               <button 
                 onClick={() => updateState({ currentPage: 'dashboard' })}
@@ -118,8 +119,8 @@ const Navigation = () => {
               </div>
             )}
             
-            {/* Mobile ThemeToggle */}
-            <ThemeToggle />
+            {/* Mobile ThemeToggle Debug */}
+            <ThemeToggleDebug />
             
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
