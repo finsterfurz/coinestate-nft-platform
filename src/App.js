@@ -2,6 +2,7 @@ import React from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider, useApp } from './context/AppContext';
 import { useTheme } from './context/ThemeContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import Navigation from './components/navigation/Navigation';
 import NotificationCenter from './components/ui/NotificationCenter';
 import ThemeDebugPanel from './components/ui/ThemeDebugPanel';
@@ -39,15 +40,32 @@ const CoinEstateApp = () => {
     <div className={`min-h-screen transition-colors duration-300 ${
       darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
     }`}>
-      <Navigation />
-      <main className="transition-colors duration-300">
-        {renderPage()}
+      {/* 🛡️ ERROR BOUNDARY: Wrap Navigation to catch navigation-related errors */}
+      <ErrorBoundary>
+        <Navigation />
+      </ErrorBoundary>
+      
+      <main id="main-content" className="transition-colors duration-300">
+        {/* 🛡️ ERROR BOUNDARY: Wrap main content to catch page-level errors */}
+        <ErrorBoundary>
+          {renderPage()}
+        </ErrorBoundary>
       </main>
-      <Footer />
-      <NotificationCenter />
+      
+      {/* 🛡️ ERROR BOUNDARY: Wrap Footer separately to isolate footer errors */}
+      <ErrorBoundary>
+        <Footer />
+      </ErrorBoundary>
+      
+      {/* 🛡️ ERROR BOUNDARY: Wrap UI components to catch notification/debug errors */}
+      <ErrorBoundary>
+        <NotificationCenter />
+      </ErrorBoundary>
       
       {/* 🔧 DEBUG: Add ThemeDebugPanel for troubleshooting */}
-      <ThemeDebugPanel />
+      <ErrorBoundary>
+        <ThemeDebugPanel />
+      </ErrorBoundary>
       
       {/* Enhanced CSS for animations with dark mode support */}
       <style jsx>{`
@@ -119,13 +137,16 @@ const CoinEstateApp = () => {
 // ==================== MAIN EXPORT WITH CORRECT PROVIDER HIERARCHY ====================
 const App = () => {
   return (
-    // 🎯 CRITICAL: ThemeProvider OUTSIDE - prevents AppContext resets during theme changes
-    <ThemeProvider>
-      {/* 🛡️ AppProvider INSIDE - notifications and app state preserved during theme switches */}
-      <AppProvider>
-        <CoinEstateApp />
-      </AppProvider>
-    </ThemeProvider>
+    // 🛡️ TOP-LEVEL ERROR BOUNDARY: Catch any provider or context errors
+    <ErrorBoundary>
+      {/* 🎯 CRITICAL: ThemeProvider OUTSIDE - prevents AppContext resets during theme changes */}
+      <ThemeProvider>
+        {/* 🛡️ AppProvider INSIDE - notifications and app state preserved during theme switches */}
+        <AppProvider>
+          <CoinEstateApp />
+        </AppProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 };
 
