@@ -13,3 +13,8 @@ export { default as BarChart3 } from './BarChart3';
 export { default as Settings } from './Settings';
 export { default as Sun } from './Sun';
 export { default as Moon } from './Moon';
+export { default as TrendingUp } from './TrendingUp';
+export { default as Award } from './Award';
+export { default as Star } from './Star';
+export { default as Clock } from './Clock';
+export { default as DollarSign } from './DollarSign';
