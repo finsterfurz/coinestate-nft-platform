@@ -4,6 +4,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import { useTheme } from './context/ThemeContext';
 import Navigation from './components/navigation/Navigation';
 import NotificationCenter from './components/ui/NotificationCenter';
+import ThemeDebugPanel from './components/ui/ThemeDebugPanel';
 import Footer from './components/layout/Footer';
 import Homepage from './pages/Homepage';
 import ProjectsPage from './pages/Projects';
@@ -44,6 +45,9 @@ const CoinEstateApp = () => {
       </main>
       <Footer />
       <NotificationCenter />
+      
+      {/* 🔧 DEBUG: Add ThemeDebugPanel for troubleshooting */}
+      <ThemeDebugPanel />
       
       {/* Enhanced CSS for animations with dark mode support */}
       <style jsx>{`
