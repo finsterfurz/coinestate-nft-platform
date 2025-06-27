@@ -1,81 +1,41 @@
 # CoinEstate NFT Platform - Robots.txt
-# https://coinestate.io/robots.txt
+# Optimized for Real Estate Investment Platform SEO
 
 User-agent: *
 Allow: /
-
-# Main pages
-Allow: /about
-Allow: /projects  
-Allow: /how-it-works
-Allow: /legal
-Allow: /privacy
-Allow: /terms
-
-# Static assets
-Allow: /static/
-Allow: /images/
-Allow: /icons/
-Allow: /*.css$
-Allow: /*.js$
-Allow: /*.png$
-Allow: /*.jpg$
-Allow: /*.jpeg$
-Allow: /*.gif$
-Allow: /*.svg$
-Allow: /*.webp$
-Allow: /*.ico$
-
-# Restrict sensitive areas
 Disallow: /dashboard
 Disallow: /admin
 Disallow: /api/
-Disallow: /private/
-Disallow: /_next/
-Disallow: /build/
-Disallow: /node_modules/
-Disallow: /.git/
-Disallow: /.env
-Disallow: /config/
+Disallow: /kyc/
+Disallow: /wallet/
+Disallow: /*.json$
 Disallow: /*?*
-Disallow: /search?
-Disallow: /login
-Disallow: /register
-Disallow: /profile
-Disallow: /settings
+Disallow: /src/
 
-# Restrict KYC and compliance areas
-Disallow: /kyc
-Disallow: /verification
-Disallow: /compliance
+# Allow important pages for SEO
+Allow: /projects
+Allow: /about
+Allow: /compliance
+Allow: /faq
 
-# Block common attack vectors
-Disallow: /wp-admin/
-Disallow: /wp-content/
-Disallow: /admin/
-Disallow: /administrator/
-Disallow: /phpmyadmin/
-Disallow: /*.php$
-Disallow: /*.sql$
-Disallow: /*.bak$
-
-# Sitemap location
+# XML Sitemap location
 Sitemap: https://coinestate.io/sitemap.xml
 
-# Crawl delay (be respectful)
+# Crawl delay for responsible crawling
 Crawl-delay: 1
 
-# Google specific
+# Specific instructions for major search engines
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 0
+Disallow: /dashboard
+Disallow: /kyc/
 
-# Bing specific  
 User-agent: Bingbot
 Allow: /
-Crawl-delay: 1
+Disallow: /dashboard
+Disallow: /kyc/
 
-# Block aggressive crawlers
+# Block malicious crawlers
 User-agent: AhrefsBot
 Disallow: /
 
@@ -84,6 +44,3 @@ Disallow: /
 
 User-agent: DotBot
 Disallow: /
-
-# Last updated: June 2025
-# Contact: info@coinestate.io
