@@ -1,0 +1,343 @@
+/* ==================== COMPONENT MODULES ==================== */
+
+/* Card Components */
+.card {
+  @apply rounded-xl shadow-lg border transition-all duration-300;
+}
+
+.cardLight {
+  @apply bg-white border-gray-200 hover:shadow-xl;
+}
+
+.cardDark { 
+  @apply bg-gray-800 border-gray-700 hover:shadow-2xl;
+}
+
+.cardInteractive {
+  @apply cursor-pointer transform hover:scale-105;
+}
+
+.cardGradient {
+  @apply bg-gradient-to-br from-white via-blue-50 to-indigo-50;
+}
+
+.cardGradientDark {
+  @apply bg-gradient-to-br from-gray-800 via-blue-900 to-indigo-900;
+}
+
+/* Button Components */
+.button {
+  @apply px-6 py-3 rounded-lg font-medium transition-all duration-200 inline-flex items-center justify-center space-x-2;
+}
+
+.buttonPrimary {
+  @apply bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105;
+}
+
+.buttonSecondary {
+  @apply border-2 border-blue-600 text-blue-600 hover:bg-blue-50 backdrop-blur-sm;
+}
+
+.buttonSecondaryDark {
+  @apply border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white backdrop-blur-sm;
+}
+
+.buttonOutline {
+  @apply border border-gray-300 text-gray-700 hover:bg-gray-50;
+}
+
+.buttonOutlineDark {
+  @apply border border-gray-600 text-gray-300 hover:bg-gray-700;
+}
+
+.buttonGhost {
+  @apply text-gray-600 hover:bg-gray-100 hover:text-gray-900;
+}
+
+.buttonGhostDark {
+  @apply text-gray-400 hover:bg-gray-800 hover:text-gray-200;
+}
+
+.buttonSuccess {
+  @apply bg-green-600 text-white hover:bg-green-700 shadow-lg;
+}
+
+.buttonWarning {
+  @apply bg-yellow-500 text-white hover:bg-yellow-600 shadow-lg;
+}
+
+.buttonDanger {
+  @apply bg-red-600 text-white hover:bg-red-700 shadow-lg;
+}
+
+.buttonDisabled {
+  @apply bg-gray-200 text-gray-400 cursor-not-allowed;
+}
+
+.buttonLoading {
+  @apply opacity-75 cursor-wait;
+}
+
+/* Loading Components */
+.loadingSpinner {
+  @apply animate-spin rounded-full border-4 border-blue-600 border-t-transparent;
+}
+
+.loadingSpinnerSmall {
+  @apply h-4 w-4;
+}
+
+.loadingSpinnerMedium {
+  @apply h-8 w-8;
+}
+
+.loadingSpinnerLarge {
+  @apply h-12 w-12;
+}
+
+.loadingPulse {
+  @apply animate-pulse bg-gray-300 rounded;
+}
+
+.loadingShimmer {
+  @apply bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300 bg-[length:200%_100%] animate-[shimmer_2s_infinite];
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Stats Card Components */
+.statsCard {
+  @apply p-6 rounded-xl backdrop-blur-sm border transition-all hover:scale-105 cursor-pointer;
+}
+
+.statsCardLight {
+  @apply bg-white/70 border-gray-200/50 hover:bg-white/90;
+}
+
+.statsCardDark {
+  @apply bg-gray-700/50 border-gray-600/50 hover:bg-gray-700/70;
+}
+
+.statsValue {
+  @apply text-3xl font-bold mb-1;
+}
+
+.statsLabel {
+  @apply text-sm text-gray-500;
+}
+
+.statsIcon {
+  @apply h-8 w-8 mb-3;
+}
+
+/* Property Card Components */
+.propertyCard {
+  @apply group rounded-2xl overflow-hidden shadow-lg border transition-all hover:scale-105 hover:shadow-2xl cursor-pointer;
+}
+
+.propertyCardLight {
+  @apply bg-white border-gray-200;
+}
+
+.propertyCardDark {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.propertyImage {
+  @apply w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500;
+}
+
+.propertyStatus {
+  @apply px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.propertyStatusActive {
+  @apply bg-green-100 text-green-800;
+}
+
+.propertyStatusPending {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.propertyStatusPlanning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+/* Badge Components */
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+}
+
+.badgeSuccess {
+  @apply bg-green-100 text-green-800;
+}
+
+.badgeWarning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.badgeError {
+  @apply bg-red-100 text-red-800;
+}
+
+.badgeInfo {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.badgeNeutral {
+  @apply bg-gray-100 text-gray-800;
+}
+
+.badgeNeutralDark {
+  @apply bg-gray-700 text-gray-300;
+}
+
+/* Modal Components */
+.modalOverlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+}
+
+.modalContent {
+  @apply max-w-md w-full rounded-xl shadow-2xl;
+}
+
+.modalContentLight {
+  @apply bg-white border border-gray-200;
+}
+
+.modalContentDark {
+  @apply bg-gray-800 border border-gray-700;
+}
+
+.modalHeader {
+  @apply p-6 border-b;
+}
+
+.modalHeaderLight {
+  @apply border-gray-200;
+}
+
+.modalHeaderDark {
+  @apply border-gray-700;
+}
+
+.modalBody {
+  @apply p-6;
+}
+
+.modalFooter {
+  @apply p-6 border-t flex justify-end space-x-3;
+}
+
+.modalFooterLight {
+  @apply border-gray-200;
+}
+
+.modalFooterDark {
+  @apply border-gray-700;
+}
+
+/* Form Components */
+.formInput {
+  @apply w-full px-4 py-3 rounded-lg border transition-colors;
+}
+
+.formInputLight {
+  @apply bg-white border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20;
+}
+
+.formInputDark {
+  @apply bg-gray-700 border-gray-600 text-white focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20;
+}
+
+.formInputError {
+  @apply border-red-500 focus:border-red-500 focus:ring-red-500/20;
+}
+
+.formLabel {
+  @apply block text-sm font-medium mb-2;
+}
+
+.formLabelLight {
+  @apply text-gray-700;
+}
+
+.formLabelDark {
+  @apply text-gray-300;
+}
+
+.formError {
+  @apply text-red-600 text-sm mt-1;
+}
+
+.formHelp {
+  @apply text-gray-500 text-sm mt-1;
+}
+
+/* Navigation Components */
+.navLink {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer;
+}
+
+.navLinkActive {
+  @apply bg-blue-600 text-white;
+}
+
+.navLinkInactive {
+  @apply text-gray-600 hover:bg-gray-100 hover:text-gray-900;
+}
+
+.navLinkInactiveDark {
+  @apply text-gray-400 hover:bg-gray-800 hover:text-gray-200;
+}
+
+/* Progress Components */
+.progressBar {
+  @apply w-full bg-gray-200 rounded-full overflow-hidden;
+}
+
+.progressBarDark {
+  @apply bg-gray-700;
+}
+
+.progressFill {
+  @apply h-full bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 transition-all duration-1000 shadow-lg;
+}
+
+/* Tooltip Components */
+.tooltip {
+  @apply absolute z-10 px-3 py-2 text-sm rounded-lg shadow-lg pointer-events-none;
+}
+
+.tooltipLight {
+  @apply bg-gray-900 text-white;
+}
+
+.tooltipDark {
+  @apply bg-gray-100 text-gray-900;
+}
+
+/* Accessibility */
+.screenReaderOnly {
+  @apply sr-only;
+}
+
+.focusVisible {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2;
+}
+
+.focusVisibleDark {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-gray-900;
+}
+
+/* Utility Classes */
+.glassmorphism {
+  @apply backdrop-blur-sm bg-white/10 border border-white/20;
+}
+
+.glassmorphismDark {
+  @apply backdrop-blur-sm bg-gray-900/10 border border-white/10;
+}
