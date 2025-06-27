@@ -84,3 +84,39 @@ export const Moon = ({ className }) => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
   </svg>
 );
+
+// NEW ICONS FOR ENHANCED HOMEPAGE
+
+export const TrendingUp = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M22 7l-8.5 8.5-5-5L2 17" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7h6v6" />
+  </svg>
+);
+
+export const Award = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <circle cx="12" cy="8" r="7" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+    <polyline points="8.21,13.89 7,23 12,20 17,23 15.79,13.88" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+  </svg>
+);
+
+export const Star = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+  </svg>
+);
+
+export const Clock = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+    <polyline points="12,6 12,12 16,14" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+  </svg>
+);
+
+export const DollarSign = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <line x1="12" y1="1" x2="12" y2="23" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+  </svg>
+);
