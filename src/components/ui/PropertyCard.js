@@ -1,6 +1,6 @@
 // src/components/ui/PropertyCard.js
 import React from 'react';
-import { Building, Key } from '../components/icons/AllIcons.js';
+import { Building, Key } from '../icons/AllIcons.js';
 import { themes } from '../../utils/themes';
 import { typography } from '../../utils/typography';
 import { formatCurrency, getStatusColor } from '../../utils/helpers';
