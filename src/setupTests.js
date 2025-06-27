@@ -1,68 +1,22 @@
-/**
- * Jest Test Setup
- * Global test configuration and mocks
- */
-
 import '@testing-library/jest-dom';
-import { TextEncoder, TextDecoder } from 'util';
-import 'jest-axe/extend-expect'; // For accessibility testing
 
-// Polyfills for jsdom
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
-
-// Mock Web3 functions
-global.ethereum = {
-  request: jest.fn(),
-  on: jest.fn(),
-  removeListener: jest.fn(),
-  isMetaMask: true
-};
-
-// Mock crypto.getRandomValues
-Object.defineProperty(global, 'crypto', {
-  value: {
-    getRandomValues: jest.fn((arr) => {
-      for (let i = 0; i < arr.length; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return arr;
-    })
-  }
-});
-
-// Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor(callback, options) {
-    this.callback = callback;
-    this.options = options;
-  }
-  
-  observe() {
-    // Simulate intersection for testing
-    this.callback([{ isIntersecting: true, target: {} }]);
-  }
-  
-  unobserve() {}
-  disconnect() {}
-};
+// ==================== GLOBAL TEST SETUP ====================
 
 // Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
-  constructor(callback) {
-    this.callback = callback;
-  }
-  
-  observe() {
-    // Simulate resize for testing
-    this.callback([{ contentRect: { width: 1024, height: 768 } }]);
-  }
-  
-  unobserve() {}
-  disconnect() {}
-};
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
 
-// Mock matchMedia
+// Mock IntersectionObserver
+global.IntersectionObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
+// Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
@@ -73,14 +27,24 @@ Object.defineProperty(window, 'matchMedia', {
     removeListener: jest.fn(), // deprecated
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
-  }))
+    dispatchEvent: jest.fn(),
+  })),
 });
 
-// Mock scrollTo
-Object.defineProperty(window, 'scrollTo', {
-  writable: true,
-  value: jest.fn()
+// Mock window.performance
+Object.defineProperty(window, 'performance', {
+  value: {
+    now: jest.fn(() => Date.now()),
+    getEntriesByType: jest.fn(() => [
+      {
+        domContentLoadedEventEnd: 1000,
+        domContentLoadedEventStart: 900,
+        loadEventEnd: 1200,
+        loadEventStart: 1100,
+        fetchStart: 800
+      }
+    ])
+  }
 });
 
 // Mock localStorage
@@ -88,50 +52,26 @@ const localStorageMock = {
   getItem: jest.fn(),
   setItem: jest.fn(),
   removeItem: jest.fn(),
-  clear: jest.fn()
+  clear: jest.fn(),
 };
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
-});
+global.localStorage = localStorageMock;
 
 // Mock sessionStorage
 const sessionStorageMock = {
   getItem: jest.fn(),
   setItem: jest.fn(),
   removeItem: jest.fn(),
-  clear: jest.fn()
+  clear: jest.fn(),
 };
-Object.defineProperty(window, 'sessionStorage', {
-  value: sessionStorageMock
-});
+global.sessionStorage = sessionStorageMock;
 
-// Console suppression for tests
+// Mock console methods to reduce noise in tests
 const originalError = console.error;
 const originalWarn = console.warn;
 
 beforeAll(() => {
-  // Suppress React Router warnings in tests
-  console.error = (...args) => {
-    if (
-      typeof args[0] === 'string' &&
-      args[0].includes('Warning: React Router Future Flag Warning')
-    ) {
-      return;
-    }
-    originalError.call(console, ...args);
-  };
-  
-  // Suppress specific warnings in tests
-  console.warn = (...args) => {
-    if (
-      typeof args[0] === 'string' &&
-      (args[0].includes('componentWillReceiveProps') ||
-       args[0].includes('componentWillMount'))
-    ) {
-      return;
-    }
-    originalWarn.call(console, ...args);
-  };
+  console.error = jest.fn();
+  console.warn = jest.fn();
 });
 
 afterAll(() => {
@@ -139,81 +79,87 @@ afterAll(() => {
   console.warn = originalWarn;
 });
 
-// Clean up after each test
-afterEach(() => {
-  // Clear all mocks
-  jest.clearAllMocks();
-  
-  // Clear localStorage mock
-  localStorageMock.getItem.mockClear();
-  localStorageMock.setItem.mockClear();
-  localStorageMock.removeItem.mockClear();
-  localStorageMock.clear.mockClear();
-  
-  // Clear sessionStorage mock
-  sessionStorageMock.getItem.mockClear();
-  sessionStorageMock.setItem.mockClear();
-  sessionStorageMock.removeItem.mockClear();
-  sessionStorageMock.clear.mockClear();
-  
-  // Reset document body
-  document.body.innerHTML = '';
-  
-  // Reset window location
-  delete window.location;
-  window.location = {
-    href: 'http://localhost:3000/',
-    origin: 'http://localhost:3000',
-    protocol: 'http:',
-    hostname: 'localhost',
-    port: '3000',
-    pathname: '/',
-    search: '',
-    hash: ''
-  };
+// Mock Image constructor for lazy loading tests
+global.Image = class {
+  constructor() {
+    setTimeout(() => {
+      this.onload && this.onload();
+    }, 100);
+  }
+};
+
+// Mock fetch for API tests
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+  })
+);
+
+// Mock Web3 and MetaMask
+global.ethereum = {
+  isMetaMask: true,
+  request: jest.fn(),
+  on: jest.fn(),
+  removeListener: jest.fn(),
+};
+
+// Extend Jest matchers for better assertions
+expect.extend({
+  toBeWithinRange(received, floor, ceiling) {
+    const pass = received >= floor && received <= ceiling;
+    if (pass) {
+      return {
+        message: () =>
+          `expected ${received} not to be within range ${floor} - ${ceiling}`,
+        pass: true,
+      };
+    } else {
+      return {
+        message: () =>
+          `expected ${received} to be within range ${floor} - ${ceiling}`,
+        pass: false,
+      };
+    }
+  },
 });
 
-// Custom matchers for better testing
-export const customMatchers = {
-  toBeAccessible: async (received) => {
-    const { axe } = await import('jest-axe');
-    const results = await axe(received);
-    
-    return {
-      pass: results.violations.length === 0,
-      message: () => {
-        if (results.violations.length === 0) {
-          return 'Expected element to have accessibility violations';
-        }
-        
-        const violations = results.violations
-          .map(violation => `${violation.id}: ${violation.description}`)
-          .join('\n');
-          
-        return `Expected element to be accessible, but found violations:\n${violations}`;
-      }
-    };
-  }
+// Global test utilities
+global.testUtils = {
+  // Generate mock NFT data
+  mockNFT: (overrides = {}) => ({
+    id: 'test-nft-1',
+    tokenId: '1',
+    name: 'Test Property NFT #1',
+    propertyId: 'prop-1',
+    owner: '0x1234567890123456789012345678901234567890',
+    verified: true,
+    ...overrides
+  }),
+
+  // Generate mock property data
+  mockProperty: (overrides = {}) => ({
+    id: 'prop-1',
+    name: 'Test Property',
+    location: 'Test City, Test Country',
+    value: '€1,000,000',
+    yield: '7.5%',
+    status: 'Active',
+    nfts: '1000 NFTs',
+    image: 'https://example.com/test-image.jpg',
+    ...overrides
+  }),
+
+  // Wait for animations to complete
+  waitForAnimation: () => new Promise(resolve => setTimeout(resolve, 500)),
+
+  // Simulate user delay
+  userDelay: () => new Promise(resolve => setTimeout(resolve, 100)),
 };
 
-// Extend Jest matchers
-expect.extend(customMatchers);
-
-// Performance tracking in tests
-global.performance = {
-  ...global.performance,
-  mark: jest.fn(),
-  measure: jest.fn(),
-  getEntriesByType: jest.fn(() => []),
-  getEntriesByName: jest.fn(() => [])
-};
-
-// Error boundary for tests
-export const TestErrorBoundary = ({ children }) => {
-  try {
-    return children;
-  } catch (error) {
-    console.error('Test Error Boundary caught an error:', error);
-    return null;
-  }
-};
+// Set up test environment
+process.env.NODE_ENV = 'test';
+process.env.REACT_APP_API_URL = 'http://localhost:3001';
+process.env.REACT_APP_CHAIN_ID = '1';
