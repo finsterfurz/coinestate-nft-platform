@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# CoinEstate Security Pre-commit Hook
+echo "🔒 Running security checks..."
+
+# Run lint-staged for code quality
+npx lint-staged
+
+# Security audit
+echo "🛡️ Running security audit..."
+npm audit --audit-level moderate
+
+if [ $? -ne 0 ]; then
+  echo "❌ Security audit failed. Please fix vulnerabilities before committing."
+  exit 1
+fi
+
+# Check for sensitive data
+echo "🔍 Checking for sensitive data..."
+
+# Check for potential secrets in staged files
+if git diff --cached --name-only | xargs grep -l "password\|secret\|key\|token" 2>/dev/null; then
+  echo "⚠️ WARNING: Potential sensitive data detected in staged files."
+  echo "Please review and ensure no real credentials are being committed."
+fi
+
+# Check for .env files
+if git diff --cached --name-only | grep -E "\.(env|key|pem)$" 2>/dev/null; then
+  echo "❌ ERROR: Environment or key files detected in staged changes."
+  echo "Please remove these files from the commit."
+  exit 1
+fi
+
+echo "✅ Security checks passed!"

@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# CoinEstate Security Pre-push Hook
+echo "🚀 Running pre-push security validation..."
+
+# Run tests
+echo "🧪 Running tests..."
+npm run test:ci
+
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Push aborted."
+  exit 1
+fi
+
+# Additional security checks for push
+echo "🔒 Running additional security validation..."
+
+# Check for TODO comments with security implications
+if git log --oneline -n 10 | grep -i "TODO.*security\|FIXME.*security" 2>/dev/null; then
+  echo "⚠️ WARNING: Security-related TODO/FIXME found in recent commits."
+  echo "Please address security issues before pushing to production."
+fi
+
+echo "✅ Pre-push validation completed!"
