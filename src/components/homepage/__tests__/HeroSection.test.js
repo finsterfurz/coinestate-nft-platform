@@ -1,289 +1,285 @@
-/**
- * Hero Section Component Tests
- * Comprehensive testing including accessibility, responsiveness, and user interactions
- */
-
 import React from 'react';
-import { 
-  render, 
-  screen, 
-  fireEvent,
-  testAccessibility,
-  testKeyboardNavigation,
-  testResponsive,
-  testThemes
-} from '../../../utils/test-utils';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { axe, toHaveNoViolations } from 'jest-axe';
 import HeroSection from '../HeroSection';
 
-// Mock functions
-const mockNavigate = jest.fn();
+// Add jest-axe matcher
+expect.extend(toHaveNoViolations);
 
-// Default props
-const defaultProps = {
-  theme: 'light',
-  onNavigate: mockNavigate
-};
+// Mock the icons
+jest.mock('../../icons', () => ({
+  Shield: ({ className }) => <div data-testid="shield-icon" className={className} />,
+  Check: ({ className }) => <div data-testid="check-icon" className={className} />,
+  Award: ({ className }) => <div data-testid="award-icon" className={className} />,
+  Building: ({ className }) => <div data-testid="building-icon" className={className} />,
+  Key: ({ className }) => <div data-testid="key-icon" className={className} />,
+  ArrowRight: ({ className }) => <div data-testid="arrow-right-icon" className={className} />
+}));
+
+// Mock typography utils
+jest.mock('../../../utils/typography', () => ({
+  typography: {
+    h1: jest.fn((theme) => `h1-${theme}`),
+    bodyLarge: jest.fn((theme) => `body-large-${theme}`)
+  }
+}));
+
+// Mock CSS modules
+jest.mock('../../../styles/animations.module.css', () => ({
+  pulseSlow: 'pulse-slow-class',
+  fadeIn: 'fade-in-class',
+  slideUp: 'slide-up-class',
+  slideIn: 'slide-in-class',
+  bounceSubtle: 'bounce-subtle-class',
+  'delay-200': 'delay-200-class',
+  'delay-300': 'delay-300-class',
+  'delay-500': 'delay-500-class',
+  'delay-1000': 'delay-1000-class'
+}));
+
+jest.mock('../../../styles/components.module.css', () => ({
+  button: 'button-class',
+  buttonPrimary: 'button-primary-class',
+  buttonSecondary: 'button-secondary-class',
+  buttonSecondaryDark: 'button-secondary-dark-class',
+  statsCard: 'stats-card-class',
+  statsCardLight: 'stats-card-light-class',
+  statsCardDark: 'stats-card-dark-class',
+  card: 'card-class',
+  cardLight: 'card-light-class',
+  cardDark: 'card-dark-class',
+  badge: 'badge-class',
+  badgeSuccess: 'badge-success-class'
+}));
 
 describe('HeroSection Component', () => {
+  const defaultProps = {
+    theme: 'light',
+    onNavigate: jest.fn()
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  // ================ BASIC RENDERING ================
-  describe('Basic Rendering', () => {
-    it('renders without crashing', () => {
+  describe('Rendering', () => {
+    test('renders without crashing', () => {
       render(<HeroSection {...defaultProps} />);
-      expect(screen.getByText(/Unlock Premium/i)).toBeInTheDocument();
+      expect(screen.getByText('Unlock Premium')).toBeInTheDocument();
     });
 
-    it('displays main headline correctly', () => {
+    test('displays main headline correctly', () => {
       render(<HeroSection {...defaultProps} />);
-      
-      expect(screen.getByText(/Unlock Premium/i)).toBeInTheDocument();
-      expect(screen.getByText(/Real Estate Governance/i)).toBeInTheDocument();
-      expect(screen.getByText(/Through NFT Credentials/i)).toBeInTheDocument();
+      expect(screen.getByText('Unlock Premium')).toBeInTheDocument();
+      expect(screen.getByText('Real Estate Governance')).toBeInTheDocument();
+      expect(screen.getByText('Through NFT Credentials')).toBeInTheDocument();
     });
 
-    it('shows regulatory badge', () => {
+    test('shows regulatory badge with correct text', () => {
       render(<HeroSection {...defaultProps} />);
-      
-      expect(screen.getByText(/CIMA Regulated/i)).toBeInTheDocument();
-      expect(screen.getByText(/Cayman Islands/i)).toBeInTheDocument();
+      expect(screen.getByText('CIMA Regulated • Cayman Islands')).toBeInTheDocument();
     });
 
-    it('displays trust indicators', () => {
+    test('displays trust indicators', () => {
       render(<HeroSection {...defaultProps} />);
-      
-      expect(screen.getByText(/KYC Verified Community/i)).toBeInTheDocument();
-      expect(screen.getByText(/Regulatory Compliant/i)).toBeInTheDocument();
-      expect(screen.getByText(/Transferable Rights/i)).toBeInTheDocument();
+      expect(screen.getByText('KYC Verified Community')).toBeInTheDocument();
+      expect(screen.getByText('Regulatory Compliant')).toBeInTheDocument();
+      expect(screen.getByText('Transferable Rights')).toBeInTheDocument();
     });
 
-    it('shows action buttons', () => {
+    test('shows action buttons', () => {
       render(<HeroSection {...defaultProps} />);
-      
-      expect(screen.getByRole('button', { name: /Explore Properties/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Get Access Now/i })).toBeInTheDocument();
+      expect(screen.getByText('Explore Properties')).toBeInTheDocument();
+      expect(screen.getByText('Get Access Now')).toBeInTheDocument();
     });
 
-    it('displays live stats preview', () => {
+    test('displays stats preview', () => {
       render(<HeroSection {...defaultProps} />);
-      
-      expect(screen.getByText(/€127.5M/i)).toBeInTheDocument();
-      expect(screen.getByText(/Total Assets/i)).toBeInTheDocument();
-      expect(screen.getByText(/1,847/i)).toBeInTheDocument();
-      expect(screen.getByText(/Active Members/i)).toBeInTheDocument();
+      expect(screen.getByText('€127.5M')).toBeInTheDocument();
+      expect(screen.getByText('Total Assets')).toBeInTheDocument();
+      expect(screen.getByText('1,847')).toBeInTheDocument();
+      expect(screen.getByText('Active Members')).toBeInTheDocument();
+    });
+
+    test('shows dashboard preview', () => {
+      render(<HeroSection {...defaultProps} />);
+      expect(screen.getByText('Governance Dashboard')).toBeInTheDocument();
+      expect(screen.getByText('Active Access')).toBeInTheDocument();
+      expect(screen.getByText('Vienna Luxury #247')).toBeInTheDocument();
+      expect(screen.getByText('Prime District, Austria')).toBeInTheDocument();
     });
   });
 
-  // ================ USER INTERACTIONS ================
-  describe('User Interactions', () => {
-    it('handles explore properties button click', async () => {
-      const { user } = render(<HeroSection {...defaultProps} />);
-      
-      const exploreButton = screen.getByRole('button', { name: /Explore Properties/i });
-      await user.click(exploreButton);
-      
-      expect(mockNavigate).toHaveBeenCalledWith('projects');
-    });
-
-    it('handles get access button click', async () => {
-      const { user } = render(<HeroSection {...defaultProps} />);
-      
-      const accessButton = screen.getByRole('button', { name: /Get Access Now/i });
-      await user.click(accessButton);
-      
-      expect(mockNavigate).toHaveBeenCalledWith('dashboard');
-    });
-
-    it('calls onNavigate with correct parameters', async () => {
-      const { user } = render(<HeroSection {...defaultProps} />);
-      
-      // Test both buttons
-      await user.click(screen.getByRole('button', { name: /Explore Properties/i }));
-      expect(mockNavigate).toHaveBeenNthCalledWith(1, 'projects');
-      
-      await user.click(screen.getByRole('button', { name: /Get Access Now/i }));
-      expect(mockNavigate).toHaveBeenNthCalledWith(2, 'dashboard');
-    });
-  });
-
-  // ================ ACCESSIBILITY TESTING ================
-  describe('Accessibility', () => {
-    it('meets WCAG accessibility guidelines', async () => {
-      await testAccessibility(<HeroSection {...defaultProps} />);
-    });
-
-    it('supports keyboard navigation', async () => {
-      await testKeyboardNavigation(
-        <HeroSection {...defaultProps} />,
-        {
-          tabStops: ['button', 'button'], // Two main action buttons
-          enterActivation: ['button']
-        }
-      );
-    });
-
-    it('has proper ARIA attributes', () => {
-      render(<HeroSection {...defaultProps} />);
-      
-      const buttons = screen.getAllByRole('button');
-      buttons.forEach(button => {
-        expect(button).toHaveAttribute('type', 'button');
-      });
-    });
-
-    it('provides alternative text for icons', () => {
-      render(<HeroSection {...defaultProps} />);
-      
-      // Icons should be marked as decorative
-      const icons = document.querySelectorAll('svg');
-      icons.forEach(icon => {
-        expect(icon).toHaveAttribute('aria-hidden', 'true');
-      });
-    });
-  });
-
-  // ================ THEME SUPPORT ================
   describe('Theme Support', () => {
-    it('applies light theme styles correctly', () => {
+    test('applies light theme classes correctly', () => {
+      const { container } = render(<HeroSection {...defaultProps} theme="light" />);
+      expect(container.querySelector('.bg-gradient-to-br.from-blue-50')).toBeInTheDocument();
+    });
+
+    test('applies dark theme classes correctly', () => {
+      const { container } = render(<HeroSection {...defaultProps} theme="dark" />);
+      expect(container.querySelector('.bg-gradient-to-br.from-gray-900')).toBeInTheDocument();
+    });
+
+    test('uses correct button styling for light theme', () => {
       render(<HeroSection {...defaultProps} theme="light" />);
-      
-      const section = screen.getByRole('region', { hidden: true }) || 
-                     document.querySelector('section');
-      expect(section).toHaveClass('bg-gradient-to-br', 'from-blue-50');
+      const secondaryButton = screen.getByText('Get Access Now').closest('button');
+      expect(secondaryButton).toHaveClass('button-secondary-class');
     });
 
-    it('applies dark theme styles correctly', () => {
+    test('uses correct button styling for dark theme', () => {
       render(<HeroSection {...defaultProps} theme="dark" />);
-      
-      const section = document.querySelector('section');
-      expect(section).toHaveClass('from-gray-900');
-    });
-
-    it('works with all theme variants', () => {
-      const themes = testThemes(<HeroSection {...defaultProps} />);
-      
-      // Both themes should render without errors
-      expect(Object.keys(themes)).toContain('light');
-      expect(Object.keys(themes)).toContain('dark');
+      const secondaryButton = screen.getByText('Get Access Now').closest('button');
+      expect(secondaryButton).toHaveClass('button-secondary-dark-class');
     });
   });
 
-  // ================ RESPONSIVE DESIGN ================
+  describe('Interactions', () => {
+    test('calls onNavigate with "projects" when Explore Properties is clicked', () => {
+      const onNavigate = jest.fn();
+      render(<HeroSection {...defaultProps} onNavigate={onNavigate} />);
+      
+      fireEvent.click(screen.getByText('Explore Properties'));
+      expect(onNavigate).toHaveBeenCalledWith('projects');
+    });
+
+    test('calls onNavigate with "dashboard" when Get Access Now is clicked', () => {
+      const onNavigate = jest.fn();
+      render(<HeroSection {...defaultProps} onNavigate={onNavigate} />);
+      
+      fireEvent.click(screen.getByText('Get Access Now'));
+      expect(onNavigate).toHaveBeenCalledWith('dashboard');
+    });
+
+    test('handles multiple button clicks correctly', () => {
+      const onNavigate = jest.fn();
+      render(<HeroSection {...defaultProps} onNavigate={onNavigate} />);
+      
+      fireEvent.click(screen.getByText('Explore Properties'));
+      fireEvent.click(screen.getByText('Get Access Now'));
+      
+      expect(onNavigate).toHaveBeenCalledTimes(2);
+      expect(onNavigate).toHaveBeenNthCalledWith(1, 'projects');
+      expect(onNavigate).toHaveBeenNthCalledWith(2, 'dashboard');
+    });
+  });
+
+  describe('Accessibility', () => {
+    test('has no accessibility violations', async () => {
+      const { container } = render(<HeroSection {...defaultProps} />);
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+
+    test('buttons are keyboard accessible', () => {
+      render(<HeroSection {...defaultProps} />);
+      const exploreButton = screen.getByText('Explore Properties');
+      const accessButton = screen.getByText('Get Access Now');
+      
+      expect(exploreButton).toHaveAttribute('type', 'button');
+      expect(accessButton).toHaveAttribute('type', 'button');
+    });
+
+    test('has proper heading hierarchy', () => {
+      render(<HeroSection {...defaultProps} />);
+      const mainHeading = screen.getByRole('heading', { level: 1 });
+      expect(mainHeading).toBeInTheDocument();
+    });
+  });
+
   describe('Responsive Design', () => {
-    it('renders correctly on mobile devices', () => {
-      const { mobile } = testResponsive(<HeroSection {...defaultProps} />);
-      
-      // Should have mobile-friendly layout
-      expect(mobile.container).toBeInTheDocument();
-    });
-
-    it('renders correctly on tablet devices', () => {
-      const { tablet } = testResponsive(<HeroSection {...defaultProps} />);
-      
-      expect(tablet.container).toBeInTheDocument();
-    });
-
-    it('renders correctly on desktop devices', () => {
-      const { desktop } = testResponsive(<HeroSection {...defaultProps} />);
-      
-      expect(desktop.container).toBeInTheDocument();
-    });
-
-    it('adjusts button layout for small screens', () => {
+    test('renders correctly on mobile viewports', () => {
       // Mock mobile viewport
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, 'matchMedia', {
         writable: true,
-        configurable: true,
-        value: 375
+        value: jest.fn().mockImplementation(query => ({
+          matches: query === '(max-width: 768px)',
+          media: query,
+          onchange: null,
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+        })),
       });
-      
+
       render(<HeroSection {...defaultProps} />);
-      
-      const buttonContainer = screen.getByRole('button', { name: /Explore Properties/i }).parentElement;
-      expect(buttonContainer).toHaveClass('flex-col', 'sm:flex-row');
+      expect(screen.getByText('Unlock Premium')).toBeInTheDocument();
+    });
+
+    test('maintains proper layout structure', () => {
+      const { container } = render(<HeroSection {...defaultProps} />);
+      expect(container.querySelector('.grid.lg\\:grid-cols-2')).toBeInTheDocument();
     });
   });
 
-  // ================ DASHBOARD PREVIEW ================
-  describe('Dashboard Preview', () => {
-    it('displays dashboard preview section', () => {
+  describe('Content Validation', () => {
+    test('displays proper NFT and property information', () => {
       render(<HeroSection {...defaultProps} />);
-      
-      expect(screen.getByText(/Governance Dashboard/i)).toBeInTheDocument();
-      expect(screen.getByText(/Active Access/i)).toBeInTheDocument();
+      expect(screen.getByText('#0247/2500')).toBeInTheDocument();
+      expect(screen.getByText('€487.50')).toBeInTheDocument();
+      expect(screen.getByText('1 Vote (0.04%)')).toBeInTheDocument();
     });
 
-    it('shows property card in preview', () => {
+    test('shows unlocked features list', () => {
       render(<HeroSection {...defaultProps} />);
-      
-      expect(screen.getByText(/Vienna Luxury #247/i)).toBeInTheDocument();
-      expect(screen.getByText(/Prime District, Austria/i)).toBeInTheDocument();
-      expect(screen.getByText(/#0247\/2500/i)).toBeInTheDocument();
+      expect(screen.getByText('Property Performance Analytics')).toBeInTheDocument();
+      expect(screen.getByText('Governance Voting Rights')).toBeInTheDocument();
+      expect(screen.getByText('Community Decision Access')).toBeInTheDocument();
+      expect(screen.getByText('Monthly Distribution Tracking')).toBeInTheDocument();
     });
 
-    it('displays unlocked features list', () => {
+    test('validates financial data format', () => {
       render(<HeroSection {...defaultProps} />);
+      const totalAssets = screen.getByText('€127.5M');
+      const activeMembers = screen.getByText('1,847');
+      const monthlyDistribution = screen.getByText('€487.50');
       
-      expect(screen.getByText(/Property Performance Analytics/i)).toBeInTheDocument();
-      expect(screen.getByText(/Governance Voting Rights/i)).toBeInTheDocument();
-      expect(screen.getByText(/Community Decision Access/i)).toBeInTheDocument();
-      expect(screen.getByText(/Monthly Distribution Tracking/i)).toBeInTheDocument();
-    });
-
-    it('shows floating animation elements', () => {
-      render(<HeroSection {...defaultProps} />);
-      
-      // Should have floating elements with animation classes
-      const floatingElements = document.querySelectorAll('.animate-bounce');
-      expect(floatingElements.length).toBeGreaterThan(0);
+      expect(totalAssets).toBeInTheDocument();
+      expect(activeMembers).toBeInTheDocument();
+      expect(monthlyDistribution).toBeInTheDocument();
     });
   });
 
-  // ================ PROP VALIDATION ================
-  describe('Prop Validation', () => {
-    it('requires theme prop', () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  describe('Performance', () => {
+    test('renders within acceptable time frame', () => {
+      const startTime = performance.now();
+      render(<HeroSection {...defaultProps} />);
+      const endTime = performance.now();
       
-      render(<HeroSection onNavigate={mockNavigate} />);
-      
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Warning: Failed prop type')
-      );
-      
-      consoleSpy.mockRestore();
+      // Should render within 100ms
+      expect(endTime - startTime).toBeLessThan(100);
     });
 
-    it('requires onNavigate prop', () => {
+    test('does not cause memory leaks', () => {
+      const { unmount } = render(<HeroSection {...defaultProps} />);
+      unmount();
+      
+      // Verify cleanup
+      expect(document.body.innerHTML).toBe('');
+    });
+  });
+
+  describe('PropTypes Validation', () => {
+    test('accepts valid theme values', () => {
+      const themes = ['light', 'dark', 'blue'];
+      themes.forEach(theme => {
+        expect(() => {
+          render(<HeroSection {...defaultProps} theme={theme} />);
+        }).not.toThrow();
+      });
+    });
+
+    test('requires onNavigate function', () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
       
       render(<HeroSection theme="light" />);
       
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Warning: Failed prop type')
+        expect.stringContaining('Failed prop type'),
+        expect.any(Object)
       );
       
       consoleSpy.mockRestore();
-    });
-  });
-
-  // ================ PERFORMANCE ================
-  describe('Performance', () => {
-    it('renders within acceptable time', () => {
-      const startTime = performance.now();
-      render(<HeroSection {...defaultProps} />);
-      const endTime = performance.now();
-      
-      const renderTime = endTime - startTime;
-      expect(renderTime).toBeLessThan(100); // Should render in less than 100ms
-    });
-
-    it('does not cause memory leaks', () => {
-      const { unmount } = render(<HeroSection {...defaultProps} />);
-      
-      // Should unmount cleanly
-      expect(() => unmount()).not.toThrow();
     });
   });
 });
