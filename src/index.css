@@ -1,24 +1,82 @@
+/* ==================== PROFESSIONAL FINTECH FONTS ==================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap');
+
 /* ==================== TAILWIND CSS IMPORTS ==================== */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ==================== FINTECH TYPOGRAPHY FOUNDATION ==================== */
+@layer base {
+  html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* Optimierte Schrift-Renderung für Fintech-Qualität */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1, 'ss01' 1;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* Letter spacing für bessere Lesbarkeit */
+    letter-spacing: -0.01em;
+  }
+
+  /* 🔢 Monospace für Finanz- und Datenwerte */
+  code, 
+  .font-mono,
+  .nft-id,
+  .wallet-address,
+  .financial-value,
+  .crypto-address {
+    font-family: 'JetBrains Mono', 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', monospace;
+    font-feature-settings: 'zero' 1, 'ss01' 1;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* ==================== FINTECH UI COMPONENTS ==================== */
+@layer components {
+  /* 💰 Financial Value Styling */
+  .financial-amount {
+    @apply font-mono font-semibold tracking-data;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 🔑 NFT ID Styling */
+  .nft-id {
+    @apply font-mono text-sm font-medium tracking-data;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 💳 Wallet Address Styling */
+  .wallet-address {
+    @apply font-mono text-xs font-medium tracking-data;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 📊 Dashboard Metrics */
+  .metric-value {
+    @apply font-mono font-bold tracking-data;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 🏢 Fintech Heading */
+  .fintech-heading {
+    @apply font-fintech font-semibold tracking-fintech;
+  }
+
+  /* 📈 Performance Text */
+  .performance-text {
+    @apply font-mono font-medium tracking-data;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
 /* ==================== CUSTOM STYLES ==================== */
-
-/* Base styles */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
 
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
@@ -235,4 +293,19 @@ textarea:focus {
   transform: translateX(100%);
   opacity: 0;
   transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+}
+
+/* ==================== FINTECH NUMBER FORMATTING ==================== */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.proportional-nums {
+  font-variant-numeric: proportional-nums;
+}
+
+/* OpenType Features für bessere Zahlen-Darstellung */
+.financial-numbers {
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+  font-variant-numeric: tabular-nums;
 }
