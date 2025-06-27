@@ -17,6 +17,7 @@ import {
   Clock,
   DollarSign
 } from '../components/icons';
+
 // ==================== ENHANCED HOMEPAGE ====================
 const Homepage = () => {
   const { updateState, theme } = useApp();
@@ -28,6 +29,40 @@ const Homepage = () => {
     holders: 0,
     yield: 0
   });
+
+  // ==================== TESTIMONIALS DATA ====================
+  const testimonials = [
+    {
+      name: "Marcus Weber",
+      role: "Portfolio Manager", 
+      location: "Zurich, Switzerland",
+      content: "CoinEstate's governance model finally gives me transparent control over real estate investments. The KYC verification ensures a professional community, and the Cayman structure provides regulatory confidence."
+    },
+    {
+      name: "Sophie Laurent",
+      role: "Investment Advisor",
+      location: "Paris, France", 
+      content: "Having direct voting rights on property decisions is revolutionary. The dashboard transparency and monthly distributions are exactly what institutional clients demand for real estate exposure."
+    },
+    {
+      name: "Andreas Müller",
+      role: "Real Estate Investor",
+      location: "Munich, Germany",
+      content: "The NFT access model is brilliant - I can transfer my governance rights while maintaining compliance. The Berlin Business Center project shows 8.9% yield with complete operational transparency."
+    },
+    {
+      name: "Emma Thompson",
+      role: "Family Office Manager", 
+      location: "London, UK",
+      content: "Cayman Islands regulation gives our family office the compliance framework we need. The community voting system ensures every decision is democratically made with verified participants."
+    },
+    {
+      name: "David Chen",
+      role: "Tech Entrepreneur",
+      location: "Amsterdam, Netherlands", 
+      content: "As someone who understands blockchain, CoinEstate strikes the perfect balance - Web3 innovation with traditional regulatory compliance. The Vienna project consistently delivers."
+    }
+  ];
 
 // Animated counter effect
   useEffect(() => {
@@ -66,7 +101,7 @@ const Homepage = () => {
       setCurrentTestimonial(prev => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials.length]);
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
