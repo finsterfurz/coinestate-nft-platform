@@ -13,10 +13,10 @@ export const AppProvider = ({ children }) => {
     
     // UI State
     currentPage: 'home',
-    theme: 'light',
+    // 🔥 THEME REMOVED - Now handled by separate ThemeContext
     loading: false,
     error: null,
-    notifications: [],
+    notifications: [], // 🛡️ Always initialized as empty array
     
     // App Data
     nftAccess: [],
@@ -26,33 +26,46 @@ export const AppProvider = ({ children }) => {
     refreshInterval: null
   });
 
+  // 🛡️ SAFE STATE UPDATER - Prevents undefined notifications
   const updateState = (updates) => {
-    setState(prev => typeof updates === 'function' ? updates(prev) : { ...prev, ...updates });
+    setState(prev => {
+      const newState = typeof updates === 'function' ? updates(prev) : { ...prev, ...updates };
+      
+      // Ensure notifications is always an array
+      if (newState.notifications && !Array.isArray(newState.notifications)) {
+        console.warn('AppContext: notifications must be an array, resetting to empty array');
+        newState.notifications = [];
+      }
+      
+      return newState;
+    });
   };
 
-  // 🔥 THEME EFFECT - Wendet die dark Klasse auf HTML Element an
-  useEffect(() => {
-    const html = document.documentElement;
-    if (state.theme === 'dark') {
-      html.classList.add('dark');
-    } else {
-      html.classList.remove('dark');
-    }
-  }, [state.theme]);
+  // 🔥 THEME EFFECT REMOVED - No longer interferes with app state
+  // Theme management is now handled by ThemeContext
 
   const addNotification = (message, type = 'info', duration = 5000) => {
-    const id = Date.now();
-    const notification = { id, message, type, timestamp: Date.now() };
-    
-    updateState(prev => ({
-      notifications: [...prev.notifications, notification]
-    }));
-
-    setTimeout(() => {
+    try {
+      const id = Date.now() + Math.random(); // More unique ID
+      const notification = { id, message, type, timestamp: Date.now() };
+      
       updateState(prev => ({
-        notifications: prev.notifications.filter(n => n.id !== id)
+        notifications: Array.isArray(prev.notifications) 
+          ? [...prev.notifications, notification]
+          : [notification] // Fallback if notifications is not array
       }));
-    }, duration);
+
+      // Auto-remove notification after duration
+      setTimeout(() => {
+        updateState(prev => ({
+          notifications: Array.isArray(prev.notifications)
+            ? prev.notifications.filter(n => n && n.id !== id)
+            : []
+        }));
+      }, duration);
+    } catch (error) {
+      console.error('Error adding notification:', error);
+    }
   };
 
   const connectWallet = async () => {
@@ -121,8 +134,10 @@ export const AppProvider = ({ children }) => {
     };
   }, [state.refreshInterval]);
 
+  // 🛡️ SAFE CONTEXT VALUE - Always provides valid notifications array
   const value = { 
     ...state, 
+    notifications: Array.isArray(state.notifications) ? state.notifications : [], // Extra safety
     updateState, 
     addNotification, 
     connectWallet,
@@ -136,5 +151,10 @@ export const AppProvider = ({ children }) => {
 export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) throw new Error('useApp must be used within AppProvider');
-  return context;
+  
+  // 🛡️ EXTRA SAFETY - Ensure notifications is always an array
+  return {
+    ...context,
+    notifications: Array.isArray(context.notifications) ? context.notifications : []
+  };
 };
