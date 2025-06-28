@@ -1,219 +1,165 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useTheme } from '../../context/ThemeContext';
 
 /**
- * LoadingSpinner Component
+ * Enhanced Loading Spinner Component
  * 
- * A reusable loading spinner with multiple variants and themes.
- * Used for page loading, async operations, and component loading states.
- * 
- * @param {Object} props - Component props
- * @param {string} [props.size="medium"] - Spinner size: "small", "medium", "large", "xl"
- * @param {string} [props.variant="spinner"] - Spinner variant: "spinner", "dots", "pulse", "skeleton"
- * @param {string} [props.message] - Optional loading message
- * @param {boolean} [props.fullScreen=false] - Whether to show as full screen overlay
- * @param {string} [props.color] - Custom color override
+ * Features:
+ * - Accessible loading indicator with screen reader support
+ * - Multiple size options for different use cases
+ * - Customizable colors and animations
+ * - Semantic HTML structure for assistive technologies
+ * - Performance optimized with CSS animations
  */
 const LoadingSpinner = ({ 
-  size = "medium", 
-  variant = "spinner", 
-  message, 
-  fullScreen = false,
-  color 
+  size = 'medium', 
+  color = 'blue', 
+  text = 'Loading...',
+  overlay = false,
+  className = '',
+  ariaLabel = 'Loading content'
 }) => {
-  const { darkMode } = useTheme();
-  
-  // Size mappings
   const sizeClasses = {
-    small: 'w-4 h-4',
-    medium: 'w-8 h-8',
-    large: 'w-12 h-12',
-    xl: 'w-16 h-16'
+    small: 'h-4 w-4',
+    medium: 'h-8 w-8',
+    large: 'h-12 w-12',
+    xlarge: 'h-16 w-16'
   };
-  
-  // Color classes
-  const colorClass = color || (darkMode 
-    ? 'text-blue-400 fill-blue-600' 
-    : 'text-blue-600 fill-blue-800'
+
+  const colorClasses = {
+    blue: 'border-blue-600',
+    purple: 'border-purple-600',
+    green: 'border-green-600',
+    gray: 'border-gray-600',
+    white: 'border-white'
+  };
+
+  const textSizeClasses = {
+    small: 'text-sm',
+    medium: 'text-base',
+    large: 'text-lg',
+    xlarge: 'text-xl'
+  };
+
+  const spinnerContent = (
+    <div 
+      className={`flex flex-col items-center justify-center space-y-3 ${className}`}
+      role="status"
+      aria-live="polite"
+      aria-label={ariaLabel}
+    >
+      {/* Animated Spinner */}
+      <div 
+        className={`
+          animate-spin rounded-full border-2 border-t-transparent 
+          ${sizeClasses[size]} 
+          ${colorClasses[color]}
+        `}
+        aria-hidden="true"
+      />
+      
+      {/* Loading Text */}
+      {text && (
+        <span 
+          className={`
+            font-medium text-gray-600 dark:text-gray-300 
+            ${textSizeClasses[size]}
+          `}
+          id="loading-text"
+        >
+          {text}
+        </span>
+      )}
+      
+      {/* Screen Reader Only Content */}
+      <span className="sr-only">
+        Please wait while content is loading. This may take a few moments.
+      </span>
+    </div>
   );
-  
-  const bgColorClass = darkMode ? 'bg-gray-800/90' : 'bg-white/90';
-  
-  // Spinner variants
-  const renderSpinner = () => {
-    switch (variant) {
-      case 'dots':
-        return (
-          <div className="flex space-x-1">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className={`${sizeClasses[size]} rounded-full bg-current animate-pulse`}
-                style={{ animationDelay: `${i * 0.2}s` }}
-              />
-            ))}
-          </div>
-        );
-      
-      case 'pulse':
-        return (
-          <div className={`${sizeClasses[size]} rounded-full bg-current animate-ping`} />
-        );
-      
-      case 'skeleton':
-        return (
-          <div className="animate-pulse space-y-3">
-            <div className="h-4 bg-current rounded-full w-32" />
-            <div className="h-4 bg-current rounded-full w-24" />
-            <div className="h-4 bg-current rounded-full w-28" />
-          </div>
-        );
-      
-      case 'spinner':
-      default:
-        return (
-          <svg
-            className={`${sizeClasses[size]} animate-spin ${colorClass}`}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            role="img"
-            aria-label="Loading"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-        );
-    }
-  };
-  
-  // Full screen overlay variant
-  if (fullScreen) {
+
+  // Overlay version for full-screen loading
+  if (overlay) {
     return (
       <div 
-        className={`fixed inset-0 z-50 flex items-center justify-center ${bgColorClass} backdrop-blur-sm`}
-        role="status"
-        aria-live="polite"
-        aria-label="Loading page content"
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="loading-text"
       >
-        <div className="flex flex-col items-center space-y-4">
-          <div className={colorClass}>
-            {renderSpinner()}
-          </div>
-          {message && (
-            <p className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              {message}
-            </p>
-          )}
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-2xl">
+          {spinnerContent}
         </div>
       </div>
     );
   }
-  
-  // Inline spinner variant
-  return (
-    <div 
-      className="flex flex-col items-center justify-center p-8"
-      role="status"
-      aria-live="polite"
-      aria-label={message || "Loading"}
-    >
-      <div className={colorClass}>
-        {renderSpinner()}
-      </div>
-      {message && (
-        <p className={`mt-2 text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          {message}
-        </p>
-      )}
-    </div>
-  );
+
+  return spinnerContent;
 };
 
 LoadingSpinner.propTypes = {
-  size: PropTypes.oneOf(['small', 'medium', 'large', 'xl']),
-  variant: PropTypes.oneOf(['spinner', 'dots', 'pulse', 'skeleton']),
-  message: PropTypes.string,
-  fullScreen: PropTypes.bool,
-  color: PropTypes.string,
-};
-
-/**
- * Page Loading Spinner
- * Pre-configured spinner for page transitions
- */
-export const PageLoadingSpinner = ({ message = "Loading page..." }) => (
-  <LoadingSpinner 
-    size="large" 
-    variant="spinner" 
-    message={message}
-    fullScreen={true}
-  />
-);
-
-/**
- * Inline Loading Spinner
- * Small spinner for inline loading states
- */
-export const InlineLoadingSpinner = ({ message }) => (
-  <LoadingSpinner 
-    size="small" 
-    variant="spinner" 
-    message={message}
-  />
-);
-
-/**
- * Button Loading Spinner
- * Tiny spinner for button loading states
- */
-export const ButtonLoadingSpinner = () => (
-  <LoadingSpinner 
-    size="small" 
-    variant="spinner"
-  />
-);
-
-/**
- * Loading Overlay Hook
- * Custom hook for managing loading overlay state
- */
-export const useLoadingOverlay = () => {
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [message, setMessage] = React.useState('');
-  
-  const showLoading = (msg = 'Loading...') => {
-    setMessage(msg);
-    setIsLoading(true);
-  };
-  
-  const hideLoading = () => {
-    setIsLoading(false);
-    setMessage('');
-  };
-  
-  const LoadingOverlay = () => (
-    isLoading ? <PageLoadingSpinner message={message} /> : null
-  );
-  
-  return {
-    isLoading,
-    showLoading,
-    hideLoading,
-    LoadingOverlay,
-  };
+  size: PropTypes.oneOf(['small', 'medium', 'large', 'xlarge']),
+  color: PropTypes.oneOf(['blue', 'purple', 'green', 'gray', 'white']),
+  text: PropTypes.string,
+  overlay: PropTypes.bool,
+  className: PropTypes.string,
+  ariaLabel: PropTypes.string,
 };
 
 export default LoadingSpinner;
+
+/**
+ * Skeleton Loading Components for specific sections
+ */
+export const SectionSkeleton = ({ height = 'h-64', className = '' }) => (
+  <div 
+    className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded-lg ${height} ${className}`}
+    role="status"
+    aria-label="Content loading"
+  >
+    <div className="flex items-center justify-center h-full">
+      <LoadingSpinner size="medium" color="gray" text="" />
+    </div>
+  </div>
+);
+
+SectionSkeleton.propTypes = {
+  height: PropTypes.string,
+  className: PropTypes.string,
+};
+
+export const CardSkeleton = ({ className = '' }) => (
+  <div 
+    className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded-xl p-6 ${className}`}
+    role="status"
+    aria-label="Card content loading"
+  >
+    <div className="space-y-4">
+      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-1/2"></div>
+      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
+    </div>
+  </div>
+);
+
+CardSkeleton.propTypes = {
+  className: PropTypes.string,
+};
+
+export const TextSkeleton = ({ lines = 3, className = '' }) => (
+  <div className={`animate-pulse space-y-2 ${className}`} role="status" aria-label="Text loading">
+    {Array.from({ length: lines }, (_, i) => (
+      <div 
+        key={i}
+        className={`h-4 bg-gray-300 dark:bg-gray-600 rounded ${
+          i === lines - 1 ? 'w-2/3' : 'w-full'
+        }`}
+      />
+    ))}
+  </div>
+);
+
+TextSkeleton.propTypes = {
+  lines: PropTypes.number,
+  className: PropTypes.string,
+};
