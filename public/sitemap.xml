@@ -4,101 +4,105 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-    <!-- Homepage - Highest Priority -->
-    <url>
-        <loc>https://coinestate.io/</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.0</priority>
-    </url>
+  <!-- Homepage -->
+  <url>
+    <loc>https://coinestate.io/</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
 
-    <!-- Main Navigation Pages -->
-    <url>
-        <loc>https://coinestate.io/projects</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.9</priority>
-    </url>
+  <!-- About Page -->
+  <url>
+    <loc>https://coinestate.io/about</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
-    <url>
-        <loc>https://coinestate.io/dashboard</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
+  <!-- How It Works -->
+  <url>
+    <loc>https://coinestate.io/how-it-works</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
-    <url>
-        <loc>https://coinestate.io/about</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
+  <!-- Projects Overview -->
+  <url>
+    <loc>https://coinestate.io/projects</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
 
-    <!-- Legal & Compliance Pages -->
-    <url>
-        <loc>https://coinestate.io/compliance</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-    </url>
+  <!-- Contact Page -->
+  <url>
+    <loc>https://coinestate.io/contact</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 
-    <url>
-        <loc>https://coinestate.io/privacy</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://coinestate.io/privacy</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>quarterly</changefreq>
+    <priority>0.6</priority>
+  </url>
 
-    <url>
-        <loc>https://coinestate.io/terms</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
+  <url>
+    <loc>https://coinestate.io/terms</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>quarterly</changefreq>
+    <priority>0.6</priority>
+  </url>
 
-    <!-- FAQ & Support -->
-    <url>
-        <loc>https://coinestate.io/faq</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-    </url>
+  <!-- Sample Property Pages (to be updated with real properties) -->
+  <url>
+    <loc>https://coinestate.io/projects/berlin-luxury-apartments</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
-    <url>
-        <loc>https://coinestate.io/support</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.5</priority>
-    </url>
+  <url>
+    <loc>https://coinestate.io/projects/london-commercial-complex</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
-    <!-- Property Pages - Individual Properties -->
-    <url>
-        <loc>https://coinestate.io/projects/vienna-luxury-complex</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
+  <url>
+    <loc>https://coinestate.io/projects/madrid-mixed-use-development</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 
-    <url>
-        <loc>https://coinestate.io/projects/berlin-business-center</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
+  <!-- Additional Resources (when available) -->
+  <!--
+  <url>
+    <loc>https://coinestate.io/blog</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
 
-    <url>
-        <loc>https://coinestate.io/projects/munich-residential</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
+  <url>
+    <loc>https://coinestate.io/faq</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 
-    <!-- Blog/News Section (wenn implementiert) -->
-    <url>
-        <loc>https://coinestate.io/news</loc>
-        <lastmod>2025-06-27</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
+  <url>
+    <loc>https://coinestate.io/whitepaper</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>quarterly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  -->
 
 </urlset>
