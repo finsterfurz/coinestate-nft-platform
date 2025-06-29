@@ -1,46 +1,85 @@
-# CoinEstate NFT Platform - Robots.txt
-# Optimized for Real Estate Investment Platform SEO
+# Robots.txt for CoinEstate NFT Platform
+# This file tells search engine crawlers which URLs they can access
 
 User-agent: *
 Allow: /
-Disallow: /dashboard
-Disallow: /admin
-Disallow: /api/
-Disallow: /kyc/
-Disallow: /wallet/
-Disallow: /*.json$
-Disallow: /*?*
-Disallow: /src/
 
-# Allow important pages for SEO
-Allow: /projects
-Allow: /about
-Allow: /compliance
-Allow: /faq
-
-# XML Sitemap location
-Sitemap: https://coinestate.io/sitemap.xml
-
-# Crawl delay for responsible crawling
-Crawl-delay: 1
-
-# Specific instructions for major search engines
+# Allow all major search engines
 User-agent: Googlebot
 Allow: /
-Disallow: /dashboard
-Disallow: /kyc/
 
 User-agent: Bingbot
 Allow: /
-Disallow: /dashboard
-Disallow: /kyc/
 
-# Block malicious crawlers
-User-agent: AhrefsBot
-Disallow: /
+User-agent: Slurp
+Allow: /
 
-User-agent: MJ12bot
-Disallow: /
+User-agent: DuckDuckBot
+Allow: /
 
-User-agent: DotBot
-Disallow: /
+# Disallow crawling of certain directories and files
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /.well-known/
+Disallow: /test/
+Disallow: /staging/
+Disallow: /*?*utm_*
+Disallow: /*?*fb_*
+Disallow: /*?*gclid*
+
+# Block access to sensitive files
+Disallow: /.env
+Disallow: /.env.*
+Disallow: /config/
+Disallow: /secrets/
+Disallow: /*.log
+Disallow: /*.backup
+Disallow: /backup/
+
+# Allow important legal and informational pages
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /how-it-works
+Allow: /projects
+
+# Performance optimization - disallow crawling of large files
+Disallow: /*.pdf$
+Disallow: /*.doc$
+Disallow: /*.docx$
+Disallow: /*.xls$
+Disallow: /*.xlsx$
+Disallow: /*.zip$
+Disallow: /*.rar$
+
+# Allow crawling of images for better SEO
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.webp$
+Allow: /*.ico$
+
+# Sitemap location
+Sitemap: https://coinestate.io/sitemap.xml
+
+# Crawl delay (be respectful to server resources)
+Crawl-delay: 1
+
+# Additional sitemaps for different content types
+Sitemap: https://coinestate.io/sitemap-properties.xml
+Sitemap: https://coinestate.io/sitemap-blog.xml
+Sitemap: https://coinestate.io/sitemap-images.xml
+
+# Clean param for Google Search Console
+# Remove tracking parameters from indexed URLs
+Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content
+Clean-param: fbclid&gclid&msclkid
+Clean-param: ref&source&medium
+
+# Host directive for preferred domain
+Host: https://coinestate.io
