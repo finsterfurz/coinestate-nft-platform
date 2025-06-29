@@ -12,9 +12,9 @@ const ProjectsPage = React.lazy(() => import('./pages/Projects'));
 const ProjectDetailsPage = React.lazy(() => import('./pages/ProjectDetails'));
 const AboutPage = React.lazy(() => import('./pages/About'));
 const HowItWorksPage = React.lazy(() => import('./pages/HowItWorks'));
-const ContactPage = React.lazy(() => import('./pages/Contact'));
-const PrivacyPage = React.lazy(() => import('./pages/Privacy'));
-const TermsPage = React.lazy(() => import('./pages/Terms'));
+const ContactPage = React.lazy(() => import('./pages/Contact.jsx'));
+const PrivacyPage = React.lazy(() => import('./pages/Privacy.jsx'));
+const TermsPage = React.lazy(() => import('./pages/Terms.jsx'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFound'));
 
 // Loading component wrapper
@@ -189,6 +189,25 @@ export const navigationConfig = [
     name: 'How It Works',
     path: routes.HOW_IT_WORKS,
     icon: 'help',
+    public: true,
+  },
+];
+
+// Footer navigation for legal pages
+export const footerNavigationConfig = [
+  {
+    name: 'Contact',
+    path: routes.CONTACT,
+    public: true,
+  },
+  {
+    name: 'Privacy Policy',
+    path: routes.PRIVACY,
+    public: true,
+  },
+  {
+    name: 'Terms of Service',
+    path: routes.TERMS,
     public: true,
   },
 ];
