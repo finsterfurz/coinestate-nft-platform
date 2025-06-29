@@ -6,7 +6,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import Layout from './components/layout/Layout';
 
 // Lazy load pages for better performance
-const Homepage = React.lazy(() => import('./pages/Homepage'));
+const Homepage = React.lazy(() => import('./pages/Homepage.jsx'));
 const DashboardPage = React.lazy(() => import('./pages/Dashboard'));
 const ProjectsPage = React.lazy(() => import('./pages/Projects'));
 const ProjectDetailsPage = React.lazy(() => import('./pages/ProjectDetails'));
