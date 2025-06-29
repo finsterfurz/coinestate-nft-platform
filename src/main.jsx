@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import App from './App.jsx';
 import reportWebVitals from './reportWebVitals';
 
 // Vite entry point
@@ -24,7 +24,7 @@ if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
 
 // Hot Module Replacement (HMR) for development
 if (import.meta.hot) {
-  import.meta.hot.accept('./App', () => {
+  import.meta.hot.accept('./App.jsx', () => {
     // Re-render the app when App.jsx changes
     root.render(
       <React.StrictMode>
