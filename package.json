@@ -1,8 +1,24 @@
 {
   "name": "coinestate-nft-platform",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
+  "description": "Enterprise-grade NFT governance platform for real estate management",
+  "keywords": ["nft", "real-estate", "governance", "web3", "blockchain", "cayman-islands"],
+  "homepage": "https://coinestate.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/finsterfurz/coinestate-nft-platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/finsterfurz/coinestate-nft-platform/issues"
+  },
+  "license": "PROPRIETARY",
+  "author": {
+    "name": "CoinEstate Foundation",
+    "email": "tech@coinestate.io",
+    "url": "https://coinestate.io"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -17,17 +33,41 @@
     "react-helmet-async": "^1.3.0",
     "axios": "^1.6.0",
     "crypto-js": "^4.2.0",
-    "prop-types": "^15.8.1"
+    "prop-types": "^15.8.1",
+    
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "morgan": "^1.10.0",
+    "winston": "^3.11.0",
+    "dotenv": "^16.3.1",
+    "node-cron": "^3.0.3",
+    "redis": "^4.6.10",
+    "pg": "^8.11.3",
+    "prisma": "^5.6.0",
+    "@prisma/client": "^5.6.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "vite",
+    "dev:server": "tsx watch src/server/app.ts",
     "start": "vite",
-    "build": "vite build",
+    "start:server": "node dist/server/app.js",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build",
+    "build:server": "tsc -p tsconfig.server.json",
     "preview": "vite preview",
+    
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src/ --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write src/",
     "format:check": "prettier --check src/",
+    
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
@@ -37,14 +77,38 @@
     "test:accessibility": "vitest run --reporter=verbose --testNamePattern=\"accessibility\"",
     "test:integration": "vitest run --reporter=verbose --testNamePattern=\"integration\"",
     "test:unit": "vitest run --reporter=verbose --testNamePattern=\"unit|Unit\"",
+    "test:security": "vitest run --reporter=verbose --testNamePattern=\"security\"",
+    "test:performance": "vitest run --reporter=verbose --testNamePattern=\"performance\"",
+    "test:e2e": "start-server-and-test dev http://localhost:3000 cypress:run",
+    
     "security:audit": "npm audit --audit-level moderate",
-    "prebuild": "npm run lint && npm run test:ci",
+    "security:check": "npm run security:audit && npm run test:security",
+    "security:scan": "trivy fs --security-checks vuln .",
+    
+    "prebuild": "npm run lint && npm run test:ci && npm run security:check",
     "prepare": "husky install",
+    "postinstall": "prisma generate",
+    
     "analyze:bundle": "vite-bundle-analyzer",
+    "analyze:deps": "depcheck",
+    "analyze:performance": "lighthouse-ci",
+    
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "test:e2e": "start-server-and-test dev http://localhost:3000 cypress:run",
-    "typecheck": "tsc --noEmit"
+    
+    "typecheck": "tsc --noEmit",
+    "typecheck:server": "tsc --noEmit -p tsconfig.server.json",
+    
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "prisma migrate reset --force",
+    
+    "docker:build": "docker build -t coinestate-nft-platform .",
+    "docker:run": "docker run -p 3000:3000 -p 3001:3001 coinestate-nft-platform",
+    "docker:compose": "docker-compose up --build"
   },
   "eslintConfig": {
     "env": {
@@ -56,34 +120,47 @@
       "eslint:recommended",
       "@vitejs/eslint-config-react",
       "plugin:react/recommended",
-      "plugin:react-hooks/recommended"
+      "plugin:react-hooks/recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:security/recommended"
     ],
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
       "ecmaVersion": "latest",
       "sourceType": "module",
       "ecmaFeatures": {
         "jsx": true
-      }
+      },
+      "project": "./tsconfig.json"
     },
     "plugins": [
       "react",
       "react-hooks",
-      "jsx-a11y"
+      "jsx-a11y",
+      "@typescript-eslint",
+      "security"
     ],
     "rules": {
       "no-console": ["warn", { "allow": ["warn", "error"] }],
-      "no-unused-vars": "error",
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "error",
       "react-hooks/exhaustive-deps": "warn",
       "no-eval": "error",
       "no-implied-eval": "error",
       "no-new-func": "error",
       "no-script-url": "error",
-      "react/prop-types": "warn",
+      "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
       "jsx-a11y/anchor-is-valid": "warn",
       "jsx-a11y/no-redundant-roles": "warn",
       "jsx-a11y/aria-role": "error",
-      "jsx-a11y/alt-text": "error"
+      "jsx-a11y/alt-text": "error",
+      "security/detect-object-injection": "warn",
+      "security/detect-non-literal-regexp": "warn",
+      "security/detect-possible-timing-attacks": "warn",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-expressions": "error"
     },
     "settings": {
       "react": {
@@ -111,43 +188,146 @@
     "@vitest/coverage-v8": "^1.3.1",
     "jsdom": "^24.0.0",
     "vite-bundle-analyzer": "^0.7.0",
+    
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.4.0",
+    
     "eslint": "^8.55.0",
     "@vitejs/eslint-config-react": "^1.0.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-security": "^1.7.1",
+    
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    
     "prettier": "^3.1.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
+    
     "jest-axe": "^8.0.0",
     "cypress": "^13.6.0",
     "start-server-and-test": "^2.0.3",
+    
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
     "@babel/preset-react": "^7.23.0",
     "identity-obj-proxy": "^3.0.0",
     "styled-jsx": "^5.1.2",
+    
     "typescript": "^5.3.3",
     "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19"
+    "@types/react-dom": "^18.2.19",
+    "@types/node": "^20.9.0",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/compression": "^1.7.5",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/morgan": "^1.9.9",
+    "@types/crypto-js": "^4.2.1",
+    "@types/pg": "^8.10.7",
+    
+    "tsx": "^4.6.0",
+    "nodemon": "^3.0.1",
+    "concurrently": "^8.2.2",
+    "depcheck": "^1.4.7",
+    "lighthouse-ci": "^0.12.1",
+    
+    "trivy": "^0.47.0",
+    "snyk": "^1.1259.0",
+    
+    "docker": "^0.2.14",
+    "docker-compose": "^0.24.6"
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npm run test:ci"
+      "pre-push": "npm run test:ci && npm run security:check"
     }
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
+    ],
+    "src/**/*.{json,md}": [
+      "prettier --write"
     ]
   },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
+  },
+  "volta": {
+    "node": "18.18.2",
+    "npm": "9.8.1"
+  },
+  "packageManager": "npm@9.8.1",
+  "os": ["darwin", "linux", "win32"],
+  "cpu": ["x64", "arm64"],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "funding": {
+    "type": "foundation",
+    "url": "https://coinestate.io/funding"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "files": [
+    "dist/",
+    "build/",
+    "public/",
+    "!**/*.test.*",
+    "!**/*.spec.*"
+  ],
+  "directories": {
+    "lib": "./src",
+    "test": "./src/__tests__",
+    "doc": "./docs"
+  },
+  "main": "./dist/server/app.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/server/app.js",
+      "require": "./dist/server/app.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/enhanced.js",
+      "require": "./dist/types/enhanced.js",
+      "types": "./dist/types/enhanced.d.ts"
+    }
+  },
+  "imports": {
+    "#types/*": "./src/types/*",
+    "#utils/*": "./src/utils/*",
+    "#components/*": "./src/components/*",
+    "#server/*": "./src/server/*"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "overrides": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "*"
+  },
+  "resolutions": {
+    "minimist": "^1.2.6",
+    "node-fetch": "^3.0.0"
   }
 }

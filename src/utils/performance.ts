@@ -1,409 +1,543 @@
 /**
- * Enhanced Performance Monitoring and Optimization Utilities
- * Comprehensive performance tracking and optimization for CoinEstate NFT Platform
+ * Performance Optimization Framework for CoinEstate NFT Platform
+ * Advanced performance monitoring and optimization utilities
  */
 
-// ================ PERFORMANCE METRICS ================
+import { lazy, Suspense, memo, useMemo, useCallback, useState, useEffect } from 'react';
+import type { PerformanceMetrics, ComponentBaseProps } from '../types/enhanced';
 
-export interface PerformanceMetrics {
-  navigationTiming: PerformanceNavigationTiming | null;
-  resourceTiming: PerformanceResourceTiming[];
-  paintTiming: PerformancePaintTiming[];
-  firstContentfulPaint: number | null;
-  largestContentfulPaint: number | null;
-  firstInputDelay: number | null;
-  cumulativeLayoutShift: number | null;
-  totalBlockingTime: number | null;
-}
+// ================ PERFORMANCE CONSTANTS ================
 
-export interface WebVitals {
-  FCP: number | null; // First Contentful Paint
-  LCP: number | null; // Largest Contentful Paint
-  FID: number | null; // First Input Delay
-  CLS: number | null; // Cumulative Layout Shift
-  TBT: number | null; // Total Blocking Time
-}
+export const PERFORMANCE_CONFIG = {
+  // Core Web Vitals Thresholds
+  LCP_THRESHOLD: 2500, // Largest Contentful Paint (ms)
+  FID_THRESHOLD: 100,  // First Input Delay (ms)
+  CLS_THRESHOLD: 0.1,  // Cumulative Layout Shift
+  
+  // Bundle Size Thresholds
+  MAX_BUNDLE_SIZE: 500 * 1024,  // 500KB
+  MAX_CHUNK_SIZE: 250 * 1024,   // 250KB
+  
+  // Image Optimization
+  LAZY_LOAD_THRESHOLD: 0.1,     // Intersection observer threshold
+  IMAGE_QUALITY: 0.8,           // JPEG quality
+  WEBP_SUPPORT: 'image/webp',
+  
+  // Cache Settings
+  CACHE_TTL: 3600000,           // 1 hour
+  SW_CACHE_NAME: 'coinestate-v1',
+  
+  // Performance Monitoring
+  SAMPLE_RATE: 0.1,             // 10% sampling
+  METRICS_BUFFER_SIZE: 100,
+};
 
-// ================ PERFORMANCE OBSERVER ================
-
-class PerformanceMonitor {
-  private metrics: Partial<WebVitals> = {};
-  private observers: PerformanceObserver[] = [];
-  private isSupported: boolean;
-
-  constructor() {
-    this.isSupported = typeof window !== 'undefined' && 'PerformanceObserver' in window;
-    if (this.isSupported) {
-      this.initializeObservers();
-    }
-  }
-
-  private initializeObservers(): void {
-    // Largest Contentful Paint
-    this.observeMetric('largest-contentful-paint', (entries) => {
-      const lastEntry = entries[entries.length - 1] as PerformanceEntry & { renderTime: number; loadTime: number };
-      this.metrics.LCP = lastEntry.renderTime || lastEntry.loadTime;
-      this.reportMetric('LCP', this.metrics.LCP);
-    });
-
-    // First Input Delay
-    this.observeMetric('first-input', (entries) => {
-      const firstInput = entries[0] as PerformanceEntry & { processingStart: number; startTime: number };
-      this.metrics.FID = firstInput.processingStart - firstInput.startTime;
-      this.reportMetric('FID', this.metrics.FID);
-    });
-
-    // Cumulative Layout Shift
-    this.observeMetric('layout-shift', (entries) => {
-      let clsScore = 0;
-      entries.forEach((entry: any) => {
-        if (!entry.hadRecentInput) {
-          clsScore += entry.value;
-        }
-      });
-      this.metrics.CLS = clsScore;
-      this.reportMetric('CLS', this.metrics.CLS);
-    });
-
-    // Paint Timing
-    this.observeMetric('paint', (entries) => {
-      entries.forEach((entry) => {
-        if (entry.name === 'first-contentful-paint') {
-          this.metrics.FCP = entry.startTime;
-          this.reportMetric('FCP', this.metrics.FCP);
-        }
-      });
-    });
-
-    // Navigation Timing
-    this.observeMetric('navigation', (entries) => {
-      const navigationEntry = entries[0] as PerformanceNavigationTiming;
-      this.reportNavigationMetrics(navigationEntry);
-    });
-  }
-
-  private observeMetric(type: string, callback: (entries: PerformanceEntry[]) => void): void {
-    try {
-      const observer = new PerformanceObserver((list) => {
-        callback(list.getEntries());
-      });
-      observer.observe({ type, buffered: true });
-      this.observers.push(observer);
-    } catch (error) {
-      console.warn(`Failed to observe ${type} performance metric:`, error);
-    }
-  }
-
-  private reportMetric(name: string, value: number | null): void {
-    if (value === null) return;
-
-    // Send to analytics (Google Analytics 4)
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'web_vitals', {
-        metric_name: name,
-        metric_value: Math.round(value),
-        custom_parameter: {
-          page_title: document.title,
-          page_location: window.location.href
-        }
-      });
-    }
-
-    // Send to performance monitoring service (e.g., Sentry)
-    if (typeof window !== 'undefined' && window.Sentry) {
-      window.Sentry.addBreadcrumb({
-        category: 'performance',
-        message: `${name}: ${Math.round(value)}ms`,
-        level: 'info'
-      });
-    }
-
-    // Development logging
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🚀 Performance Metric - ${name}:`, `${Math.round(value)}ms`);
-    }
-  }
-
-  private reportNavigationMetrics(navigationEntry: PerformanceNavigationTiming): void {
-    const metrics = {
-      dns_lookup_time: navigationEntry.domainLookupEnd - navigationEntry.domainLookupStart,
-      tcp_connection_time: navigationEntry.connectEnd - navigationEntry.connectStart,
-      ssl_time: navigationEntry.connectEnd - navigationEntry.secureConnectionStart,
-      ttfb: navigationEntry.responseStart - navigationEntry.requestStart, // Time to First Byte
-      response_time: navigationEntry.responseEnd - navigationEntry.responseStart,
-      dom_processing_time: navigationEntry.domContentLoadedEventStart - navigationEntry.responseEnd,
-      load_complete_time: navigationEntry.loadEventEnd - navigationEntry.loadEventStart
-    };
-
-    // Report critical timing metrics
-    Object.entries(metrics).forEach(([name, value]) => {
-      if (value > 0) {
-        this.reportMetric(name, value);
-      }
-    });
-  }
-
-  public getMetrics(): Partial<WebVitals> {
-    return { ...this.metrics };
-  }
-
-  public disconnect(): void {
-    this.observers.forEach(observer => observer.disconnect());
-    this.observers = [];
-  }
-}
-
-// ================ PERFORMANCE OPTIMIZATION HOOKS ================
+// ================ COMPONENT LAZY LOADING ================
 
 /**
- * React hook for performance monitoring
+ * Enhanced lazy loading with error boundaries
  */
-export const usePerformanceMonitor = () => {
-  const [metrics, setMetrics] = React.useState<Partial<WebVitals>>({});
-  const monitorRef = React.useRef<PerformanceMonitor | null>(null);
+export const createLazyComponent = <T extends ComponentBaseProps>(
+  importFn: () => Promise<{ default: React.ComponentType<T> }>,
+  fallback?: React.ReactNode
+) => {
+  const LazyComponent = lazy(importFn);
+  
+  return memo((props: T) => (
+    <Suspense fallback={fallback || <ComponentLoader />}>
+      <LazyComponent {...props} />
+    </Suspense>
+  ));
+};
 
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      monitorRef.current = new PerformanceMonitor();
-      
-      // Update metrics periodically
-      const interval = setInterval(() => {
-        if (monitorRef.current) {
-          setMetrics(monitorRef.current.getMetrics());
-        }
-      }, 1000);
+/**
+ * Loading component with skeleton UI
+ */
+const ComponentLoader: React.FC = memo(() => (
+  <div className="animate-pulse">
+    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+  </div>
+));
 
-      return () => {
-        clearInterval(interval);
-        if (monitorRef.current) {
-          monitorRef.current.disconnect();
-        }
-      };
-    }
+// ================ IMAGE OPTIMIZATION ================
+
+interface OptimizedImageProps {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  lazy?: boolean;
+  quality?: number;
+  className?: string;
+  onLoad?: () => void;
+  onError?: () => void;
+}
+
+/**
+ * Optimized image component with lazy loading and WebP support
+ */
+export const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
+  src,
+  alt,
+  width,
+  height,
+  lazy = true,
+  quality = PERFORMANCE_CONFIG.IMAGE_QUALITY,
+  className = '',
+  onLoad,
+  onError
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(!lazy);
+  const [imageSrc, setImageSrc] = useState<string>('');
+
+  // Generate optimized image URL
+  const generateOptimizedUrl = useCallback((url: string, w?: number, h?: number, q?: number) => {
+    const params = new URLSearchParams();
+    if (w) params.set('w', w.toString());
+    if (h) params.set('h', h.toString());
+    if (q) params.set('q', Math.round(q * 100).toString());
+    
+    // In production, this would integrate with image optimization service
+    return url + (params.toString() ? `?${params.toString()}` : '');
   }, []);
 
-  return metrics;
-};
-
-/**
- * Component performance measurement hook
- */
-export const useComponentPerformance = (componentName: string) => {
-  const mountTime = React.useRef<number>(performance.now());
-  const renderCount = React.useRef<number>(0);
-
-  React.useEffect(() => {
-    renderCount.current += 1;
+  // WebP support detection
+  const supportsWebP = useMemo(() => {
+    if (typeof window === 'undefined') return false;
     
-    const renderTime = performance.now() - mountTime.current;
-    
-    if (renderTime > 16) { // Warn if component takes longer than one frame
-      console.warn(`⚠️ Slow component render: ${componentName} took ${renderTime.toFixed(2)}ms`);
-    }
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+  }, []);
 
-    // Track render performance
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'component_performance', {
-        component_name: componentName,
-        render_time: Math.round(renderTime),
-        render_count: renderCount.current
-      });
-    }
-  });
-
-  return {
-    renderCount: renderCount.current,
-    mountTime: mountTime.current
-  };
-};
-
-// ================ RESOURCE OPTIMIZATION ================
-
-/**
- * Lazy loading utility for images
- */
-export const lazyLoadImage = (src: string, placeholder?: string): string => {
-  const [imageSrc, setImageSrc] = React.useState(placeholder || '');
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const imgRef = React.useRef<HTMLImageElement>();
-
-  React.useEffect(() => {
-    if (!src) return;
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    if (!lazy) return;
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const img = new Image();
-            img.onload = () => {
-              setImageSrc(src);
-              setIsLoaded(true);
-              observer.disconnect();
-            };
-            img.onerror = () => {
-              console.error(`Failed to load image: ${src}`);
-              observer.disconnect();
-            };
-            img.src = src;
-          }
-        });
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
       },
-      { rootMargin: '100px' }
+      { threshold: PERFORMANCE_CONFIG.LAZY_LOAD_THRESHOLD }
     );
 
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
-    }
+    const element = document.getElementById(`img-${src}`);
+    if (element) observer.observe(element);
 
     return () => observer.disconnect();
-  }, [src]);
+  }, [src, lazy]);
 
-  return imageSrc;
+  // Generate image source with optimization
+  useEffect(() => {
+    if (!isInView) return;
+
+    let optimizedSrc = src;
+    
+    // Apply WebP if supported
+    if (supportsWebP && !src.includes('.svg')) {
+      optimizedSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+    }
+    
+    // Apply size and quality optimization
+    optimizedSrc = generateOptimizedUrl(optimizedSrc, width, height, quality);
+    
+    setImageSrc(optimizedSrc);
+  }, [isInView, src, width, height, quality, supportsWebP, generateOptimizedUrl]);
+
+  const handleLoad = useCallback(() => {
+    setIsLoaded(true);
+    onLoad?.();
+  }, [onLoad]);
+
+  const handleError = useCallback(() => {
+    // Fallback to original image if optimized version fails
+    if (imageSrc !== src) {
+      setImageSrc(src);
+    } else {
+      onError?.();
+    }
+  }, [imageSrc, src, onError]);
+
+  return (
+    <div 
+      id={`img-${src}`}
+      className={`relative overflow-hidden ${className}`}
+      style={{ width, height }}
+    >
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+        </div>
+      )}
+      {isInView && (
+        <img
+          src={imageSrc}
+          alt={alt}
+          width={width}
+          height={height}
+          loading={lazy ? 'lazy' : 'eager'}
+          className={`transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          onLoad={handleLoad}
+          onError={handleError}
+          decoding="async"
+        />
+      )}
+    </div>
+  );
+});
+
+// ================ PERFORMANCE MONITORING ================
+
+/**
+ * Performance metrics collector
+ */
+export class PerformanceMonitor {
+  private static metrics: PerformanceMetrics[] = [];
+  private static observer: PerformanceObserver | null = null;
+
+  /**
+   * Initialize performance monitoring
+   */
+  static initialize(): void {
+    if (typeof window === 'undefined' || this.observer) return;
+
+    // Core Web Vitals monitoring
+    this.observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        this.processEntry(entry);
+      }
+    });
+
+    // Observe different performance entry types
+    this.observer.observe({ entryTypes: ['navigation', 'paint', 'largest-contentful-paint', 'first-input'] });
+
+    // Monitor layout shifts
+    this.monitorCLS();
+
+    // Periodic cleanup of old metrics
+    setInterval(() => this.cleanup(), 300000); // 5 minutes
+  }
+
+  /**
+   * Process performance entry
+   */
+  private static processEntry(entry: PerformanceEntry): void {
+    const metrics: Partial<PerformanceMetrics> = {
+      pageLoadTime: 0,
+      firstContentfulPaint: 0,
+      largestContentfulPaint: 0,
+      cumulativeLayoutShift: 0,
+      firstInputDelay: 0,
+      timeToInteractive: 0
+    };
+
+    switch (entry.entryType) {
+      case 'navigation':
+        const navEntry = entry as PerformanceNavigationTiming;
+        metrics.pageLoadTime = navEntry.loadEventEnd - navEntry.fetchStart;
+        metrics.timeToInteractive = navEntry.domContentLoadedEventEnd - navEntry.fetchStart;
+        break;
+
+      case 'paint':
+        if (entry.name === 'first-contentful-paint') {
+          metrics.firstContentfulPaint = entry.startTime;
+        }
+        break;
+
+      case 'largest-contentful-paint':
+        metrics.largestContentfulPaint = entry.startTime;
+        break;
+
+      case 'first-input':
+        const fiEntry = entry as any;
+        metrics.firstInputDelay = fiEntry.processingStart - fiEntry.startTime;
+        break;
+    }
+
+    this.recordMetrics(metrics as PerformanceMetrics);
+  }
+
+  /**
+   * Monitor Cumulative Layout Shift
+   */
+  private static monitorCLS(): void {
+    let clsValue = 0;
+    let clsEntries: any[] = [];
+
+    const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (!(entry as any).hadRecentInput) {
+          const firstSessionEntry = clsEntries[0];
+          const lastSessionEntry = clsEntries[clsEntries.length - 1];
+
+          if (!firstSessionEntry || 
+              entry.startTime - lastSessionEntry.startTime < 1000 ||
+              entry.startTime - firstSessionEntry.startTime < 5000) {
+            clsEntries.push(entry);
+            clsValue += (entry as any).value;
+          } else {
+            this.recordMetrics({
+              cumulativeLayoutShift: clsValue
+            } as PerformanceMetrics);
+            clsEntries = [entry];
+            clsValue = (entry as any).value;
+          }
+        }
+      }
+    });
+
+    observer.observe({ entryTypes: ['layout-shift'] });
+  }
+
+  /**
+   * Record performance metrics
+   */
+  static recordMetrics(metrics: PerformanceMetrics): void {
+    if (Math.random() > PERFORMANCE_CONFIG.SAMPLE_RATE) return; // Sampling
+
+    this.metrics.push({
+      ...metrics,
+      timestamp: Date.now()
+    } as PerformanceMetrics);
+
+    // Keep only recent metrics
+    if (this.metrics.length > PERFORMANCE_CONFIG.METRICS_BUFFER_SIZE) {
+      this.metrics = this.metrics.slice(-PERFORMANCE_CONFIG.METRICS_BUFFER_SIZE);
+    }
+
+    // Check thresholds and alert if needed
+    this.checkThresholds(metrics);
+  }
+
+  /**
+   * Check performance thresholds
+   */
+  private static checkThresholds(metrics: PerformanceMetrics): void {
+    const warnings: string[] = [];
+
+    if (metrics.largestContentfulPaint > PERFORMANCE_CONFIG.LCP_THRESHOLD) {
+      warnings.push(`LCP exceeded threshold: ${metrics.largestContentfulPaint}ms`);
+    }
+
+    if (metrics.firstInputDelay > PERFORMANCE_CONFIG.FID_THRESHOLD) {
+      warnings.push(`FID exceeded threshold: ${metrics.firstInputDelay}ms`);
+    }
+
+    if (metrics.cumulativeLayoutShift > PERFORMANCE_CONFIG.CLS_THRESHOLD) {
+      warnings.push(`CLS exceeded threshold: ${metrics.cumulativeLayoutShift}`);
+    }
+
+    if (warnings.length > 0) {
+      console.warn('Performance thresholds exceeded:', warnings);
+      // In production, send to monitoring service
+    }
+  }
+
+  /**
+   * Get performance summary
+   */
+  static getSummary(): {
+    averages: PerformanceMetrics;
+    latest: PerformanceMetrics | null;
+    count: number;
+  } {
+    if (this.metrics.length === 0) {
+      return {
+        averages: {} as PerformanceMetrics,
+        latest: null,
+        count: 0
+      };
+    }
+
+    const averages = this.metrics.reduce(
+      (acc, metric) => {
+        Object.keys(metric).forEach(key => {
+          if (typeof metric[key as keyof PerformanceMetrics] === 'number') {
+            acc[key as keyof PerformanceMetrics] = 
+              (acc[key as keyof PerformanceMetrics] || 0) + 
+              metric[key as keyof PerformanceMetrics];
+          }
+        });
+        return acc;
+      },
+      {} as PerformanceMetrics
+    );
+
+    Object.keys(averages).forEach(key => {
+      if (typeof averages[key as keyof PerformanceMetrics] === 'number') {
+        averages[key as keyof PerformanceMetrics] = 
+          averages[key as keyof PerformanceMetrics] / this.metrics.length;
+      }
+    });
+
+    return {
+      averages,
+      latest: this.metrics[this.metrics.length - 1],
+      count: this.metrics.length
+    };
+  }
+
+  /**
+   * Clean up old metrics
+   */
+  private static cleanup(): void {
+    const cutoff = Date.now() - PERFORMANCE_CONFIG.CACHE_TTL;
+    this.metrics = this.metrics.filter(metric => 
+      (metric as any).timestamp > cutoff
+    );
+  }
+}
+
+// ================ BUNDLE OPTIMIZATION ================
+
+/**
+ * Dynamic import utility with error handling
+ */
+export const dynamicImport = async <T>(
+  importFn: () => Promise<T>,
+  fallback?: T
+): Promise<T> => {
+  try {
+    return await importFn();
+  } catch (error) {
+    console.error('Dynamic import failed:', error);
+    if (fallback) return fallback;
+    throw error;
+  }
 };
 
 /**
- * Resource preloading utility
+ * Code splitting utility for routes
  */
-export const preloadResources = (resources: Array<{ href: string; as: string; type?: string }>) => {
-  if (typeof window === 'undefined') return;
-
-  resources.forEach(({ href, as, type }) => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.href = href;
-    link.as = as;
-    if (type) link.type = type;
-    
-    link.onload = () => {
-      console.log(`✅ Preloaded resource: ${href}`);
-    };
-    
-    link.onerror = () => {
-      console.error(`❌ Failed to preload resource: ${href}`);
-    };
-    
-    document.head.appendChild(link);
-  });
+export const createAsyncRoute = (importFn: () => Promise<any>) => {
+  return lazy(() =>
+    importFn().catch(err => {
+      console.error('Route loading failed:', err);
+      return { default: () => <div>Failed to load component</div> };
+    })
+  );
 };
 
 // ================ MEMORY OPTIMIZATION ================
 
 /**
- * Memory usage monitoring
+ * Memory-efficient component hook
  */
-export const useMemoryMonitor = () => {
-  const [memoryInfo, setMemoryInfo] = React.useState<any>(null);
-
-  React.useEffect(() => {
-    if (typeof window !== 'undefined' && 'memory' in performance) {
-      const updateMemoryInfo = () => {
-        const memory = (performance as any).memory;
-        setMemoryInfo({
-          usedJSHeapSize: memory.usedJSHeapSize,
-          totalJSHeapSize: memory.totalJSHeapSize,
-          jsHeapSizeLimit: memory.jsHeapSizeLimit,
-          usagePercentage: (memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100
-        });
-      };
-
-      updateMemoryInfo();
-      const interval = setInterval(updateMemoryInfo, 5000);
-
-      return () => clearInterval(interval);
-    }
-  }, []);
-
-  return memoryInfo;
-};
-
-/**
- * Cleanup utility for preventing memory leaks
- */
-export const useCleanup = (cleanupFn: () => void, deps: React.DependencyList = []) => {
-  React.useEffect(() => {
-    return cleanupFn;
-  }, deps);
-};
-
-// ================ PERFORMANCE UTILITIES ================
-
-/**
- * Debounce utility for performance optimization
- */
-export const useDebounce = <T>(value: T, delay: number): T => {
-  const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
-
-  React.useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-};
-
-/**
- * Throttle utility for performance optimization
- */
-export const useThrottle = <T extends (...args: any[]) => any>(
-  callback: T,
-  delay: number
+export const useMemoryOptimized = <T>(
+  factory: () => T,
+  deps: React.DependencyList
 ): T => {
-  const lastRun = React.useRef(Date.now());
-
-  return React.useCallback(
-    ((...args) => {
-      if (Date.now() - lastRun.current >= delay) {
-        callback(...args);
-        lastRun.current = Date.now();
-      }
-    }) as T,
-    [callback, delay]
-  );
+  return useMemo(factory, deps);
 };
 
 /**
- * Bundle size analyzer (development only)
+ * Optimized event handler hook
  */
-export const analyzeBundleSize = () => {
-  if (process.env.NODE_ENV !== 'development') return;
-
-  const scripts = Array.from(document.querySelectorAll('script[src]'));
-  const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
-
-  console.group('📦 Bundle Analysis');
-  console.log('JavaScript files:', scripts.length);
-  console.log('CSS files:', styles.length);
-  
-  scripts.forEach((script: any) => {
-    console.log(`JS: ${script.src}`);
-  });
-  
-  styles.forEach((style: any) => {
-    console.log(`CSS: ${style.href}`);
-  });
-  
-  console.groupEnd();
+export const useOptimizedCallback = <T extends (...args: any[]) => any>(
+  callback: T,
+  deps: React.DependencyList
+): T => {
+  return useCallback(callback, deps);
 };
 
-// ================ EXPORT ALL ================
+/**
+ * Component performance wrapper
+ */
+export const withPerformanceTracking = <P extends ComponentBaseProps>(
+  WrappedComponent: React.ComponentType<P>,
+  componentName: string
+) => {
+  return memo((props: P) => {
+    useEffect(() => {
+      const startTime = performance.now();
+      
+      return () => {
+        const endTime = performance.now();
+        const renderTime = endTime - startTime;
+        
+        PerformanceMonitor.recordMetrics({
+          pageLoadTime: renderTime,
+          component: componentName
+        } as any);
+      };
+    }, []);
 
-export const performanceMonitor = new PerformanceMonitor();
+    return <WrappedComponent {...props} />;
+  });
+};
+
+// ================ SERVICE WORKER UTILITIES ================
+
+/**
+ * Service worker registration with cache management
+ */
+export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration | null> => {
+  if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New content available
+              showUpdateNotification();
+            }
+          });
+        }
+      });
+
+      return registration;
+    } catch (error) {
+      console.error('Service worker registration failed:', error);
+      return null;
+    }
+  }
+  return null;
+};
+
+/**
+ * Show update notification
+ */
+const showUpdateNotification = (): void => {
+  // In production, this would show a user-friendly update notification
+  console.log('New app version available');
+};
+
+// ================ EXPORT ALL UTILITIES ================
 
 export default {
+  PERFORMANCE_CONFIG,
+  createLazyComponent,
+  OptimizedImage,
   PerformanceMonitor,
-  usePerformanceMonitor,
-  useComponentPerformance,
-  useMemoryMonitor,
-  useCleanup,
-  useDebounce,
-  useThrottle,
-  lazyLoadImage,
-  preloadResources,
-  analyzeBundleSize,
-  performanceMonitor
+  dynamicImport,
+  createAsyncRoute,
+  useMemoryOptimized,
+  useOptimizedCallback,
+  withPerformanceTracking,
+  registerServiceWorker
+};
+
+export {
+  PERFORMANCE_CONFIG,
+  createLazyComponent,
+  OptimizedImage,
+  PerformanceMonitor,
+  dynamicImport,
+  createAsyncRoute,
+  useMemoryOptimized,
+  useOptimizedCallback,
+  withPerformanceTracking,
+  registerServiceWorker
 };
