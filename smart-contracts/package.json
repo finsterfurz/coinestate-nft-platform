@@ -1,0 +1,126 @@
+{
+  "name": "coinestate-smart-contracts",
+  "version": "1.0.0",
+  "description": "CoinEstate NFT Platform Smart Contracts - Governance-based real estate platform",
+  "main": "hardhat.config.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "deploy:localhost": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy.js --network mainnet",
+    "verify:sepolia": "hardhat run scripts/verify.js --network sepolia",
+    "verify:mainnet": "hardhat run scripts/verify.js --network mainnet",
+    "node": "hardhat node",
+    "clean": "hardhat clean",
+    "size": "hardhat size-contracts",
+    "lint": "solhint contracts/**/*.sol",
+    "lint:fix": "solhint contracts/**/*.sol --fix",
+    "format": "prettier --write contracts/**/*.sol",
+    "security:slither": "slither .",
+    "security:mythril": "myth analyze contracts/*.sol",
+    "docs": "hardhat docgen",
+    "flatten": "hardhat flatten",
+    "abi:export": "node scripts/export-abis.js",
+    "prepare": "npm run compile && npm run abi:export"
+  },
+  "keywords": [
+    "smart-contracts",
+    "ethereum",
+    "nft",
+    "real-estate",
+    "governance",
+    "dao",
+    "blockchain",
+    "solidity",
+    "hardhat",
+    "defi"
+  ],
+  "author": {
+    "name": "CoinEstate Team",
+    "email": "dev@coinestate.com",
+    "url": "https://coinestate.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/finsterfurz/coinestate-nft-platform.git",
+    "directory": "smart-contracts"
+  },
+  "bugs": {
+    "url": "https://github.com/finsterfurz/coinestate-nft-platform/issues"
+  },
+  "homepage": "https://github.com/finsterfurz/coinestate-nft-platform#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.3"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.2",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.9",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@typechain/ethers-v6": "^0.4.3",
+    "@typechain/hardhat": "^8.0.3",
+    "@types/chai": "^4.3.6",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.8",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.8.0",
+    "hardhat": "^2.17.2",
+    "hardhat-contract-sizer": "^2.10.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "prettier": "^3.0.3",
+    "prettier-plugin-solidity": "^1.1.3",
+    "solhint": "^4.0.0",
+    "solidity-coverage": "^0.8.5",
+    "typechain": "^8.3.1",
+    "typescript": "^5.2.2"
+  },
+  "solhint": {
+    "extends": "solhint:recommended",
+    "rules": {
+      "compiler-version": ["error", "^0.8.0"],
+      "func-visibility": ["warn", {"ignoreConstructors": true}],
+      "not-rely-on-time": "off",
+      "avoid-low-level-calls": "off",
+      "no-inline-assembly": "off"
+    }
+  },
+  "prettier": {
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": false,
+    "quoteProps": "preserve",
+    "trailingComma": "es5",
+    "bracketSpacing": true,
+    "overrides": [
+      {
+        "files": "*.sol",
+        "options": {
+          "printWidth": 120,
+          "tabWidth": 4,
+          "useTabs": false,
+          "singleQuote": false,
+          "bracketSpacing": false,
+          "explicitTypes": "always"
+        }
+      }
+    ]
+  },
+  "files": [
+    "contracts/",
+    "scripts/",
+    "test/",
+    "hardhat.config.js",
+    "abis/"
+  ]
+}
