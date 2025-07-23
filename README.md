@@ -8,12 +8,11 @@
 
 > **Governance-based Real Estate Platform with NFT Voting Credentials**
 
-CoinEstate NFT is a community governance platform for real estate management operating under Cayman Islands regulatory framework. Each NFT represents voting rights and operational control over specific real estate projects, not securities or investment contracts.
+CoinEstate NFT is a community governance platform for real estate management . Each NFT represents voting rights and operational control over specific real estate projects, not securities or investment contracts.
 
 ## 🎯 **Key Features**
 
 - 🗳️ **Governance Voting**: NFT holders vote on operational decisions (repairs, contractors, costs)
-- 🏛️ **Cayman Regulated**: Operates under Cayman Islands Private Fund + Foundation structure
 - 🔐 **KYC Verified**: Secure identity verification for all participants
 - 📊 **Transparent Dashboard**: Real-time property performance and governance metrics
 - ⚖️ **Active Participation**: Voting requirements with reward/penalty system
@@ -260,10 +259,8 @@ See [Backend README](./backend/README.md) for complete API documentation.
 ## 🏛️ **Legal & Regulatory Framework**
 
 ### **Jurisdiction**
-- **Cayman Islands**: Primary regulatory jurisdiction
 - **Entity Type**: Private Fund + Foundation structure
 - **Governance**: Off-chain community voting
-- **Compliance**: CIMA regulated
 
 ### **Important Disclaimers**
 - **NOT Securities**: NFTs are governance credentials, not investment contracts
@@ -314,54 +311,7 @@ See [Backend README](./backend/README.md) for complete API documentation.
 - Institutional features
 - Third-party API integrations
 
-## 🔄 **API Usage Examples**
 
-### **Authentication**
-```javascript
-// Register user
-const response = await fetch('/api/v1/auth/register', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    username: 'john_doe',
-    email: 'john@example.com',
-    password: 'securePassword123'
-  })
-});
-```
-
-### **Property Management**
-```javascript
-// Create property
-const property = await fetch('/api/v1/properties', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  },
-  body: JSON.stringify({
-    title: 'Luxury Apartment Berlin',
-    price: 500000,
-    location: { city: 'Berlin', country: 'Germany' }
-  })
-});
-```
-
-### **NFT Operations**
-```javascript
-// Purchase NFT shares
-const purchase = await fetch('/api/v1/nfts/123/purchase', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  },
-  body: JSON.stringify({
-    quantity: 10,
-    paymentMethod: 'crypto'
-  })
-});
-```
 
 ## 🧪 **Testing**
 
@@ -454,7 +404,7 @@ This software is proprietary and confidential. Unauthorized copying, distributio
 
 - CoinEstate NFTs are governance credentials only
 - They do NOT represent securities or investment contracts
-- Community voting participation and rewards are administered off-chain under Cayman Islands law
+- Community voting participation and rewards are administered off-chain 
 - All participants must complete KYC verification
 - Past performance does not guarantee future results
 - Consult legal and financial advisors before participation
