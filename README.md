@@ -493,7 +493,6 @@ This software is proprietary and confidential. Unauthorized copying, distributio
 ---
 
 **© 2025 CoinEstate Foundation. All rights reserved.**  
-*Regulated under Cayman Islands law | Not available in restricted jurisdictions*
 
 **Website**: [To be announced]  
-**Legal Entity**: CoinEstate Foundation, George Town, Cayman Islands
+**Legal Entity**: CoinEstate coming soon 
